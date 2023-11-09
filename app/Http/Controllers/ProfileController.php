@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use Illuminate\Support\Facades\DB;
+
+use App\Http\Controllers\EmployeeController;
+
 class ProfileController extends Controller
 {
     /**
@@ -18,9 +22,19 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $allPositions = DB::table('positions')
+            ->get();
+
+        $employeeController = new EmployeeController();
+                
+        $isEmployeeAnAttorney = $employeeController->isEmployeeAnAttorney();
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'allPositions' => $allPositions,
+            'isEmployeeAnAttorney' => $isEmployeeAnAttorney
+
         ]);
     }
 

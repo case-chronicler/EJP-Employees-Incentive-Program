@@ -8,9 +8,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    protected $primaryKey = 'user_id';
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +26,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_employee'
     ];
 
     /**
@@ -41,4 +47,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the employee associated with the user.
+     */
+    public function employee(): HasOne {
+        return $this->hasOne(Employee::class, 'user_id');
+    }
+
+     /**
+     * Get the employee associated with the user.
+     */
+    public function invite(): HasMany {
+        return $this->hasMany(Invite::class, 'invite_sent_by');
+    }
 }

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Position;
 use App\Models\User;
+use App\Models\Invite;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -11,17 +13,124 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\DB;
+
+use App\Http\Controllers\EmployeeController;
+use Error;
+use Exception;
+
 
 class RegisteredUserController extends Controller
 {
+    private function getInvitedUserByInviteLink ($invite_link) {
+        $invitedUser = Invite::where('invite_link_ref', $invite_link)->limit(1)->get();
+
+        return $invitedUser;
+    }
+
+    private function registerInvitedUser (Request $request, $invitedUser_positions) {    
+
+        try {
+            //code...
+            DB::beginTransaction();
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+
+            $newEmployee = $user->employee()->create([
+                'balance' => 0.00,
+            ]);
+
+            foreach ($invitedUser_positions as $key => $value) {
+                $position = Position::find($invitedUser_positions[$key]);
+
+                $employeeController = new EmployeeController();
+                
+                $employeeController->addEmployeeRole($newEmployee, $position);
+            } 
+
+            $user->update(
+                [
+                    'name' => $request->name,
+                    'email' => $request->email,
+                ],
+                [
+                    'is_employee' => 1
+                ]
+                );
+
+            // DB::rollBack();
+            // die();
+
+            DB::table('invites')
+              ->where('invite_link_ref', htmlspecialchars($request->input('invite_link')))
+              ->update(
+                [
+                    'invite_status' => 'accepted',
+                ]
+            );                                  
+
+            DB::commit(); 
+
+            event(new Registered($user));
+
+            Auth::login($user);
+
+            return redirect(RouteServiceProvider::HOME);
+
+        } catch (Exception $th) {
+            DB::rollBack();
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                    'general' => $th->getMessage()
+                ]);
+        }
+    }
+
+
     /**
      * Display the registration view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('Auth/Register');
+        $invite_link = $request->query('invite_link');
+        $invite_link_is_valid = ($invite_link) ? true : false;
+
+        $invitedUser = $this->getInvitedUserByInviteLink ($invite_link) ;
+        $invitedUser_email = '';
+        $invitedUser_invite_already_processed = '';
+
+        if(count($invitedUser)){
+
+            foreach ($invitedUser as $user) {
+                $invitedUser_email = $user->invite_email;   
+                
+                if($user->invite_status !== 'pending'){                
+                    $invitedUser_invite_already_processed = 'This invite has already being processed!';
+                }                 
+            }            
+                    
+            $invite_link_is_valid = true;
+        }else{
+            $invite_link_is_valid = false;
+        } 
+
+        if($invitedUser_invite_already_processed === 'This invite has already being processed!'){
+            $invite_link_is_valid = false;
+        }
+        
+        return Inertia::render('Auth/Register', [
+            'invite_link_is_valid' => $invite_link_is_valid,
+            'invite_link' => $invite_link,
+            'invitedUser_email' => $invitedUser_email,
+            'invitedUser_invite_already_processed' => $invitedUser_invite_already_processed
+        ]);
     }
 
     /**
@@ -31,22 +140,88 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $elevatedUsers = config('elevated_user.emails');
+        
+        $userIsElevated = false;
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        for ($i=0; $i < count($elevatedUsers) ; $i++) { 
+            if($elevatedUsers[$i] === $request->input('email')){
+                $userIsElevated = true;
+                break;
+            }
+        }
 
-        event(new Registered($user));
+        if($userIsElevated){
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:'.User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
 
-        Auth::login($user);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'is_employee' => 1
+            ]);
 
-        return redirect(RouteServiceProvider::HOME);
+            $newEmployee = $user->employee()->create([
+                'balance' => 0.00,
+                'has_elevated_permission' => 1
+            ]);
+            
+            $position = Position::where("position_name", "Attorney")->first(); // Attorney
+
+            $newEmployee->role()->create([
+                "position_id" => $position->position_id,
+                'start_date' => now(),
+                'is_active' => true,
+            ]);
+
+            event(new Registered($user));
+
+            Auth::login($user);
+
+            return redirect(RouteServiceProvider::HOME);
+
+        }else{
+            $invitedUser = Invite::where('invite_link_ref', htmlspecialchars($request->input('invite_link')))->limit(1)->first();
+
+            if(!$invitedUser){                
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'general' => 'invalid invite link!'
+                ]);
+            }
+
+            if($invitedUser->invite_status !== 'pending'){                
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'general' => 'This invite has already being processed!'
+                ]);
+            }
+            
+            $invitedUser_email = $invitedUser->invite_email;
+            $invitedUser_positions = $invitedUser->positions_assigned;
+
+            $invitedUser_email = trim($invitedUser_email) ?? '';
+            $invitedUser_positions = json_decode($invitedUser_positions, JSON_OBJECT_AS_ARRAY) ?? [];
+
+            if($request->input('email') !== $invitedUser_email){
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'email' => 'This email was not invited with the invite link used'
+                ]);
+            }
+
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'invite_link' => 'required|string|exists:invites,invite_link_ref',
+                'email' => 'required|string|email|max:255|unique:'.User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+
+            return $this->registerInvitedUser($request, $invitedUser_positions);
+        }
+
+
+        
     }
 }
