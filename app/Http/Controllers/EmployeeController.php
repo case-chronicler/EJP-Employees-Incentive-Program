@@ -95,6 +95,7 @@ class EmployeeController extends Controller
             if(!isset($processed_users_and_employees['00'.$current_user_and_employee->user_id])){
                 $processed_users_and_employees['00'.$current_user_and_employee->user_id] = [
                     'user_id' => $current_user_and_employee->user_id,
+                    'employee_id' => $current_user_and_employee->employee_id,
                     'user_fullname' => $current_user_and_employee->user_fullname,
                     'user_email' => $current_user_and_employee->user_email,
                     'is_user_employed' => $current_user_and_employee->is_user_employed,
@@ -129,11 +130,13 @@ class EmployeeController extends Controller
         $allPositions = DB::table('positions')->where('position_name', '!=', 'Attorney')
             ->get();
         $isEmployeeAnAttorney = $this->isEmployeeAnAttorney();
+        $allGifts = DB::table('incentives')->get();
 
         return Inertia::render('Employee/index', [    
             'users_and_employees' => $processed_users_and_employees,
             // 'users_and_employees' => $users_and_employees,
             'allPositions' => $allPositions,
+            'allGifts' => $allGifts,
             'isEmployeeAnAttorney' => $isEmployeeAnAttorney
         ]);
     }
@@ -163,7 +166,7 @@ class EmployeeController extends Controller
         $user_id = $validated['user_id'];
         $position_id = $validated['position_id'];
         
-        $allEmployees = Employee::with('user')->get();        
+        $allEmployees = Employee::with('user')->where('user_id', $user_id)->get();        
         $user = User::find($user_id);
         $position = Position::find($position_id);
         $newRole = null;
@@ -181,8 +184,8 @@ class EmployeeController extends Controller
                 $newRole = $this->addEmployeeRole($newEmployee, $position);
     
             }else{
-                foreach ($allEmployees as $current_employee) {
-                    $employee = Employee::find($current_employee->employee_id);;
+                foreach ($allEmployees as $current_employee_in_loop) {
+                    $employee = Employee::find($current_employee_in_loop->employee_id);;
                     $newRole = $this->addEmployeeRole($employee, $position);
                 }
             }   

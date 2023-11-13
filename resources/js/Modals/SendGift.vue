@@ -1,12 +1,8 @@
 <script setup>
 import { initFlowbite } from "flowbite";
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, computed, watch, reactive, onBeforeMount } from "vue";
 import { useForm, usePage } from "@inertiajs/vue3";
-import TextInput from "@/Components/TextInput.vue";
-import InputError from "@/Components/InputError.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import NoticeIcon from "@/Components/icons/notice_icon.vue";
-import User from "@/Components/icons/user.vue";
+import Swal from "sweetalert2";
 
 import ModalWrapper from "@/Modals/parts/ModalWrapper.vue";
 import SendGiftUserSelect from "@/Modals/parts/SendGiftUserSelect.vue";
@@ -30,75 +26,68 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
-	user: Object,
+	allGifts: {
+		type: Array,
+		required: true,
+	},
+	selected_users: Object,
 });
 
-const newInviteForm_submit = () => {
-	if (form.processing) {
+const giftsAndPrices_new = reactive({
+	individual: [],
+	group: [],
+});
+
+onBeforeMount(() => {
+	if (props.allGifts.length == 0) {
 		return;
 	}
-	const newInviteForm = document.querySelector("#newInviteForm") ?? false;
 
-	if (newInviteForm) {
-		form.post(route("invite.store"), {
-			onSuccess: () => form.reset(),
-		});
-	}
-};
+	props.allGifts.forEach((elem) => {
+		const gift_details = {
+			name: elem.icon_name,
+			gift_name: elem.name,
+			gift_id: elem.incentive_id,
+			unit_price: elem.amount_per_item,
+		};
 
-const giftsAndPrices = ref([
-	{
-		type: "individual",
-		items: [
-			{
-				name: "coffee",
-				unit_price: 5,
-			},
-			{
-				name: "cupcake",
-				unit_price: 2.5,
-				type: "individual",
-			},
-			{
-				name: "flower",
-				unit_price: 25,
-				type: "individual",
-			},
-			{
-				name: "silver",
-				unit_price: 10,
-				type: "individual",
-			},
-		],
-	},
-]);
+		switch (elem.type) {
+			case "individual":
+				giftsAndPrices_new.individual.push(gift_details);
+				break;
+			case "group":
+				giftsAndPrices_new.group.push(gift_details);
+				break;
+		}
+	});
+});
 
-const gift_type = ref("individual");
 const gift_name = ref("");
 const gift_unit_price = ref(0.0);
 const gift_quantity = ref(0);
 const gift_total_price = ref(0.0);
 const gift_note = ref("");
+const gift_id = ref("");
 
 const gift_employee = computed(() => {
-	return props.user
-})
+	return props.selected_users;
+});
 
 const isFormDirty = computed(() => {
-	const employee_id = gift_employee.value?.user_id ?? false
+	const employee_id = gift_employee.value?.user_id ?? false;
 
-	if(
-		!employee_id || 
+	if (
+		!employee_id ||
 		!gift_name.value ||
 		!gift_total_price.value ||
 		gift_quantity.value < 1 ||
 		!gift_note.value
-	){		
-		return true
+	) {
+		return true;
 	}
 
-	return false
-})
+	return false;
+});
 
 watch(gift_quantity, (newVal, oldVal) => {
 	gift_total_price.value = gift_unit_price.value * gift_quantity.value;
@@ -108,26 +97,24 @@ watch(gift_name, (newVal, oldVal) => {
 	gift_unit_price.value = 0.0;
 	gift_quantity.value = 0;
 	gift_total_price.value = 0.0;
+	gift_id.value = "";
 
-	let gifts = giftsAndPrices.value.filter((elem) => {
-		return elem.type === gift_type.value;
-	});
+	let gifts = giftsAndPrices_new.individual;
 
 	if (!gifts) {
 		return;
 	}
 
-	gifts = gifts[0];
-
-	gifts = gifts.items.find((elem) => {
+	let gift = gifts.find((elem) => {
 		return elem.name == newVal;
 	});
 
-	if (!gifts) {
+	if (!gift) {
 		return;
 	}
 
-	gift_unit_price.value = gifts.unit_price;
+	gift_id.value = gift.gift_id;
+	gift_unit_price.value = gift.unit_price;
 	gift_quantity.value = 1;
 
 	gift_total_price.value = gift_unit_price.value * gift_quantity.value;
@@ -144,23 +131,9 @@ const decreaseQuantity = () => {
 	gift_quantity.value -= 1;
 };
 
-const getIndividualGiftsAndPrices = computed(() => {
-	let individualGiftsAndPrices = giftsAndPrices.value.filter((elem) => {
-		return elem.type === gift_type.value;
-	});
-
-	if (!individualGiftsAndPrices) {
-		return [];
-	}
-
-	individualGiftsAndPrices = individualGiftsAndPrices[0];
-
-	return individualGiftsAndPrices?.items ?? [];
-});
-
 const form = useForm({
 	gift_type: "",
-	users: [],
+	employees: [],
 	gift_id: "",
 	gift_total_price: "",
 	gift_quantity: "",
@@ -168,23 +141,32 @@ const form = useForm({
 });
 
 const newGift_submit = () => {
-	if(isFormDirty.value){
-		return
+	if (isFormDirty.value) {
+		return;
 	}
 
-	const employee_id = gift_employee.value?.user_id ?? false
+	const employee_id = gift_employee.value?.employee_id ?? false;
 
-	form.gift_type = 'individual'
-	form.users = [employee_id]
-	form.gift_id = '1'
-	form.gift_total_price = gift_total_price.value.toFixed(2)
-	form.gift_note = gift_note.value
-	form.gift_quantity = gift_quantity.value.toFixed(2)
+	form.gift_type = "individual";
+	form.employees = [employee_id];
+	form.gift_id = gift_id.value;
+	form.gift_total_price = gift_total_price.value.toFixed(2);
+	form.gift_note = gift_note.value;
+	form.gift_quantity = gift_quantity.value.toFixed(2);
 
 	form.post(route("Incentive_gift.store"), {
 		onFinish: () => form.reset(),
+		onSuccess: () => {
+			modalStore.closeModal();
+
+			Swal.fire({
+				title: "hurray!",
+				text: "Your gift has been sent",
+				icon: "success",
+			});
+		},
 	});
-}
+};
 
 // initialize components based on data attribute selectors
 onMounted(() => {
@@ -193,9 +175,7 @@ onMounted(() => {
 </script>
 
 <template>
-	
 	<ModalWrapper>
-
 		<div
 			class="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0"
 		>
@@ -205,29 +185,41 @@ onMounted(() => {
 				<div
 					class="bg-white shadow-xl mt-8 mr-0 mb-0 ml-0 pt-4 pr-10 pb-4 pl-10 flow-root rounded-lg sm:py-2"
 				>
+					<p class="text-red-800 text-sm">
+						{{ form.errors.gift_type }}
+						{{ form.errors.employees }}
+						{{ form.errors.gift_total_price }}
+						{{ form.errors.gift_quantity }}
+						{{ form.errors.gift_note }}
+						{{ form.errors.general }}
+					</p>
+
 					<div class="py-10">
-						{{ form.errors }}
 						<div>
-							<div
-								class="flex items-center justify-between space-x-5"							
-							>
-							
+							<h6 class="text-sm mb-2 font-bold text-gray-700">Receiver</h6>
+							<div class="flex items-center justify-between space-x-5">
 								<div class="flex items-center flex-1 min-w-0">
 									<div class="flex-1 min-w-0">
 										<p class="text-lg font-bold text-gray-800 truncate">
 											{{ gift_employee.user_email }}
 										</p>
-										<p class="text-gray-600 text-sm">{{ (gift_employee.positions) ? gift_employee.positions.join(', ') : '' }}</p>
+										<p class="text-gray-600 text-sm">
+											{{
+												gift_employee.positions
+													? gift_employee.positions.join(", ")
+													: ""
+											}}
+										</p>
 									</div>
-								</div>									
+								</div>
 							</div>
 						</div>
 
 						<div class="mt-10">
-							<p class="mb-4">Pick a gift</p>
+							<h6 class="mb-4 text-sm font-bold text-gray-700">Pick a gift</h6>
 							<div class="mb-8 grid grid-cols-4 gap-3 max-w-sm">
 								<div
-									v-for="(gift, index) in getIndividualGiftsAndPrices"
+									v-for="(gift, index) in giftsAndPrices_new.individual"
 									:key="index"
 									class="w-12 h-12 hover:cursor-pointer"
 								>
@@ -269,7 +261,7 @@ onMounted(() => {
 											<Pizza />
 										</div>
 										<div
-											v-if="gift.name === 'silver'"
+											v-if="gift.name === 'silver_pen'"
 											:class="{ 'bg-gray-300 ': gift_name === gift.name }"
 											class="hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 text-center inline-flex items-center"
 										>
@@ -280,42 +272,40 @@ onMounted(() => {
 							</div>
 							<div v-if="gift_name !== ''">
 								<div class="mb-2">
-									<p class="font-normal text-gray-700 dark:text-gray-400">
+									<div class="font-normal text-gray-700 dark:text-gray-400">
 										<div
-											v-if="gift_name === 'coffee'"											
+											v-if="gift_name === 'coffee'"
 											class="inline-block inline-flex items-center mr-2"
 										>
-											<Coffee w_class="w-[16px]" h_class="h-[16px]"/>
+											<Coffee w_class="w-[16px]" h_class="h-[16px]" />
 										</div>
 										<div
-											v-if="gift_name === 'cupcake'"											
-											class="inline-block  nline-flex items-center mr-2"
+											v-if="gift_name === 'cupcake'"
+											class="inline-block nline-flex items-center mr-2"
 										>
-											<Cupcake w_class="w-[16px]" h_class="h-[16px]"/>
+											<Cupcake w_class="w-[16px]" h_class="h-[16px]" />
 										</div>
 										<div
-											v-if="gift_name === 'flower'"											
+											v-if="gift_name === 'flower'"
 											class="inline-block inline-flex items-center mr-2"
 										>
-											<Flower w_class="w-[16px]" h_class="h-[16px]"/>
+											<Flower w_class="w-[16px]" h_class="h-[16px]" />
 										</div>
 										<div
-											v-if="gift_name === 'pizza'"											
-											class="inline-bloc  inline-flex items-center mr-2"
+											v-if="gift_name === 'pizza'"
+											class="inline-bloc inline-flex items-center mr-2"
 										>
-											<Pizza w_class="w-[16px]" h_class="h-[16px]"/>
+											<Pizza w_class="w-[16px]" h_class="h-[16px]" />
 										</div>
 										<div
-											v-if="gift_name === 'silver'"											
+											v-if="gift_name === 'silver'"
 											class="inline-block font-me lex items-center mr-2"
 										>
-											<QuillSliverPen w_class="w-[16px]" h_class="h-[16px]"/>
+											<QuillSliverPen w_class="w-[16px]" h_class="h-[16px]" />
 										</div>
 
-										 x {{ gift_quantity }} = ${{
-											gift_total_price
-										}}
-									</p>
+										x {{ gift_quantity }} = ${{ gift_total_price }}
+									</div>
 								</div>
 								<div>
 									<div class="inline-flex rounded-md shadow-sm" role="group">
@@ -324,24 +314,24 @@ onMounted(() => {
 											type="button"
 											class="px-3 py-1.5 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
 										>
-											<Minus/>
+											<Minus />
 										</button>
 										<button
 											@click="increaseQuantity"
 											type="button"
 											class="px-3 py-1.5 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
 										>
-											<Add/>
+											<Add />
 										</button>
 									</div>
 								</div>
 
-								<div class="my-3">
-									<label
-										for="message"
-										class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Add note</label
-									>
+								<div class="my-6">
+									<label for="message" class="block mb-2">
+										<h6 class="mb-3 text-sm font-bold text-gray-700">
+											Add a note
+										</h6>
+									</label>
 									<textarea
 										id="message"
 										v-model="gift_note"
@@ -353,16 +343,16 @@ onMounted(() => {
 							</div>
 						</div>
 
-						<div class=" py-3 sm:flex sm:flex-row-reverse">
+						<div class="py-3 sm:flex sm:flex-row-reverse">
 							<button
 								@click.prevent="newGift_submit"
 								:disabled="form.processing || isFormDirty"
 								type="button"
 								:class="{
 									'bg-gray-400 hover:cursor-not-allowed': isFormDirty,
-									'bg-gray-800 hover:bg-gray-500': !isFormDirty
+									'bg-gray-800 hover:bg-gray-500': !isFormDirty,
 								}"
-								class="inline-flex w-full justify-center rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm  sm:ml-3 sm:w-auto"
+								class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto"
 							>
 								Send gift
 							</button>

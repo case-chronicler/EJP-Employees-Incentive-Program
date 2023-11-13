@@ -1,11 +1,23 @@
 <template>
 	<div class="w-full">
-		<Listbox v-model="selectedPerson">
+		<Listbox v-model="selectedEmployees" multiple>
+			<ListboxLabel
+				class="text-xs underline decoration-dotted underline-offset-4 float-right mb-1"
+				>Add employees to the group:</ListboxLabel
+			>
+			<div class="clear-both"></div>
 			<div class="relative mt-1">
 				<ListboxButton
-					class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+					class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left border border-1 shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
 				>
-					<span class="block truncate">{{ selectedPerson.name }}</span>
+					<span v-if="selectedEmployees.length > 0" class="block truncate">
+						{{
+							selectedEmployees
+								.map((employees) => employees.user_fullname)
+								.join(", ")
+						}}
+					</span>
+					<span v-else> Please select an employee </span>
 					<span
 						class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
 					>
@@ -26,9 +38,9 @@
 					>
 						<ListboxOption
 							v-slot="{ active, selected }"
-							v-for="person in people"
-							:key="person.name"
-							:value="person"
+							v-for="employee in employees"
+							:key="employee.employee_id"
+							:value="employee"
 							as="template"
 						>
 							<li
@@ -42,7 +54,7 @@
 										selected ? 'font-medium' : 'font-normal',
 										'block truncate',
 									]"
-									>{{ person.name }}</span
+									>{{ employee.user_fullname }}</span
 								>
 								<span
 									v-if="selected"
@@ -60,7 +72,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, defineProps, onBeforeMount, watch, onUnmounted } from "vue";
 import {
 	Listbox,
 	ListboxLabel,
@@ -70,13 +82,23 @@ import {
 } from "@headlessui/vue";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/vue/20/solid";
 
-const people = [
-	{ name: "Wade Cooper" },
-	{ name: "Arlene Mccoy" },
-	{ name: "Devon Webb" },
-	{ name: "Tom Cook" },
-	{ name: "Tanya Fox" },
-	{ name: "Hellen Schmidt" },
-];
-const selectedPerson = ref(people[0]);
+const props = defineProps({
+	allUsers: {
+		type: Object,
+		required: true,
+	},
+});
+
+const emit = defineEmits(["selectedEmployeesChanged"]);
+
+const employees = ref([]);
+const selectedEmployees = ref([]);
+
+watch(selectedEmployees, (newVal) => {
+	emit("selectedEmployeesChanged", newVal);
+});
+
+onBeforeMount(() => {
+	employees.value = props.allUsers;
+});
 </script>

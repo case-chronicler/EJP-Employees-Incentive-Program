@@ -8,10 +8,11 @@ import SuitcaseIcon from "@/Components/icons/suitcase_icon.vue";
 import GiftIcon from "@/Components/icons/gift.vue";
 import NewEmployeeInvite from "@/Modals/NewEmployeeInvite.vue";
 import SendGift from "@/Modals/SendGift.vue";
+import SendGift_Group from "@/Modals/SendGift_Group.vue";
 
 import Dropdown from "@/Components/Dropdown.vue";
 
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
 import { computed, reactive, ref } from "vue";
 
 import { useModalStore } from "@/Store/modal";
@@ -20,12 +21,14 @@ const modalStore = useModalStore();
 
 const props = defineProps({
 	allPositions: Array,
+	allGifts: Array,
 	users_and_employees: Object,
 	isEmployeeAnAttorney: Boolean,
 });
 
 const gift_type = ref("");
-const user = ref([]);
+const selected_users = ref([]);
+const allUsers = ref([]);
 
 const requestsResult = reactive({
 	addRole: null,
@@ -49,6 +52,8 @@ const processed_users_and_employees = computed(() => {
 });
 
 const addRole = async (user_id, position_id) => {
+	// console.log(user_id);
+	// return;
 	try {
 		let res = await axios.post(route("employee.store"), {
 			user_id: user_id,
@@ -66,9 +71,31 @@ const initSendGit = (selected_gift_type, selected_user = []) => {
 		return;
 	}
 	gift_type.value = selected_gift_type;
-	user.value = selected_user;
+	selected_users.value = selected_user;
 
 	modalStore.openSendGiftModal();
+};
+
+const initSendGit_Group = (selected_gift_type) => {
+	if (selected_gift_type == "") {
+		return;
+	}
+	gift_type.value = selected_gift_type;
+	allUsers.value = [];
+
+	for (const key in processed_users_and_employees.value) {
+		if (Object.hasOwnProperty.call(processed_users_and_employees.value, key)) {
+			const element = processed_users_and_employees.value[key];
+
+			if (element.user_id === usePage().props.auth.user.user_id) {
+				continue;
+			}
+
+			allUsers.value.push(element);
+		}
+	}
+
+	modalStore.openSendGift_GroupModal();
 };
 </script>
 
@@ -79,8 +106,15 @@ const initSendGit = (selected_gift_type, selected_user = []) => {
 	/>
 	<SendGift
 		:gift_type="gift_type"
-		:user="user"
+		:allGifts="allGifts"
+		:selected_users="selected_users"
 		v-if="modalStore.currentModal === 'SEND_GIFT'"
+	/>
+	<SendGift_Group
+		:gift_type="gift_type"
+		:allGifts="allGifts"
+		:allUsers="allUsers"
+		v-if="modalStore.currentModal === 'SendGift_Group'"
 	/>
 
 	<Head title="Employees" />
@@ -109,7 +143,10 @@ const initSendGit = (selected_gift_type, selected_user = []) => {
 		<div class="py-12">
 			<div class="max-w-7xl mx-auto px-6 lg:px-8 space-y-6">
 				<div class="mb-4" v-if="isEmployeeAnAttorney">
-					<PrimaryButton type="button" class="mx-2 float-right"
+					<PrimaryButton
+						@click.prevent="initSendGit_Group('group', [])"
+						type="button"
+						class="mx-2 float-right"
 						>group gift</PrimaryButton
 					>
 					<div class="clear-both"></div>
@@ -136,6 +173,19 @@ const initSendGit = (selected_gift_type, selected_user = []) => {
 											<div>
 												<div class="h-18 w-18 border-2 rounded-full p-3">
 													<EmployeeSvgIcon />
+												</div>
+												<div>
+													<h2
+														class="text-xs mt-2 font-bold text-gray-600 text-center min-h-[20px]"
+													>
+														<span
+															v-if="
+																$page.props.auth.user.user_id ===
+																user_and_employee.user_id
+															"
+															>(YOU)</span
+														>
+													</h2>
 												</div>
 											</div>
 											<div>
@@ -168,15 +218,20 @@ const initSendGit = (selected_gift_type, selected_user = []) => {
 											</div>
 										</div>
 									</div>
+
 									<div
-										v-if="isEmployeeAnAttorney"
+										v-if="
+											isEmployeeAnAttorney &&
+											$page.props.auth.user.user_id !==
+												user_and_employee.user_id
+										"
 										class="w-full text-right border-t-2 border-gray-100 py-4 flex items-end justify-end"
 									>
 										<Dropdown>
 											<template #trigger>
 												<div>
 													<span
-														class="underline px-3 py-1.5 mr-2 my-3 text-sm font-semibold text-gray-600 transition-all duration-200 hover:text-gray-700 hover:cursor-pointer"
+														class="underline px-3 py-1.5 mr-2 text-sm font-semibold text-gray-600 transition-all duration-200 hover:text-gray-700 hover:cursor-pointer"
 														>add role</span
 													>
 												</div>
@@ -197,7 +252,6 @@ const initSendGit = (selected_gift_type, selected_user = []) => {
 												</button>
 											</template>
 										</Dropdown>
-
 										<button
 											@click="initSendGit('individial', user_and_employee)"
 											type="button"
@@ -205,6 +259,14 @@ const initSendGit = (selected_gift_type, selected_user = []) => {
 										>
 											<GiftIcon />
 										</button>
+									</div>
+									<div
+										v-else
+										class="w-full text-right border-t-2 border-gray-100 py-4 flex items-end justify-end"
+									>
+										<span class="text-sm texy-gray-500"
+											>(actions not available)</span
+										>
 									</div>
 								</div>
 							</div>

@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Event;
 use App\Events\NewUserInviteCreated;
 use App\Listeners\SendUserInviteNotifications;
 
+use App\Events\newEmployeeGift;
+use App\Listeners\SendNewGiftNotification;
+
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -24,6 +27,11 @@ class EventServiceProvider extends ServiceProvider
         NewUserInviteCreated::class => [
             SendUserInviteNotifications::class,
         ],
+        newEmployeeGift::class => [
+            SendNewGiftNotification::class,
+        ],
+
+        
     ];
 
     /**

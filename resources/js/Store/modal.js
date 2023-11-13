@@ -12,6 +12,10 @@ export const useModalStore = defineStore("modal", () => {
 		currentModal.value = "SEND_GIFT";
 	};
 
+	const openSendGift_GroupModal = () => {
+		currentModal.value = "SendGift_Group";
+	};
+
 	const openRequestFundsModal = () => {
 		currentModal.value = "REQUEST_FUNDS";
 	};
@@ -24,6 +28,7 @@ export const useModalStore = defineStore("modal", () => {
 		currentModal,
 		openNewEmployeeInviteModal,
 		openSendGiftModal,
+		openSendGift_GroupModal,
 		openRequestFundsModal,
 		closeModal,
 	};
