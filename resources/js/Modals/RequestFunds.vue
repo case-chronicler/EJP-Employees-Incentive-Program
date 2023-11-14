@@ -5,7 +5,8 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
-import NoticeIcon from "@/Components/icons/notice_icon.vue";
+import Swal from "sweetalert2";
+
 import Coin from "@/Components/icons/coin.vue";
 
 import { useModalStore } from "@/Store/modal";
@@ -44,7 +45,16 @@ const fundRequest_submit = () => {
 
 	if (fundsRequestForm) {
 		form.post(route("withdrawal_requests.store"), {
-			onSuccess: () => form.reset(),
+			onSuccess: () => {
+				form.reset();
+				modalStore.closeModal();
+
+				Swal.fire({
+					title: "Withdrawal request sent!",
+					text: "Your request for fund release has been sent to the attorney",
+					icon: "success",
+				});
+			},
 		});
 	}
 };
@@ -99,6 +109,10 @@ onMounted(() => {
 							</div>
 						</div>
 						<div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+							<p class="text-red-800 text-sm">
+								{{ form.errors.amount }}
+								{{ form.errors.general }}
+							</p>
 							<form
 								id="fundsRequestForm"
 								class="space-y-6"

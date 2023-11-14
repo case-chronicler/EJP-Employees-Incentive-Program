@@ -61,6 +61,10 @@ Route::resource('withdrawals', WithdrawalsController::class)
     ->middleware(['auth', 'verified']);    
 
 Route::middleware('auth')->group(function () {
+    
+    Route::get('/incentive_gift', [IncentiveGiftController::class, 'index'])->name('incentive_gift.index');
+    Route::get('/incentive_gift/{incentive_gift_id}', [IncentiveGiftController::class, 'show'])->name('incentive_gift.show');
+
     Route::post('/withdrawal_requests', [WithdrawalRequestsController::class, 'store'])->name('withdrawal_requests.store');
 
     Route::get('/withdrawal_requests/{withdrawal_request_id}', [WithdrawalRequestsController::class, 'show'])->name('withdrawal_requests.show');

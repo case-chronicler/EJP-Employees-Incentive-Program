@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 
+use Exception;
+use Inertia\Inertia;
+use Inertia\Response;
+
+
 class IncentiveGiftController extends Controller
 {
     /**
@@ -19,7 +24,105 @@ class IncentiveGiftController extends Controller
      */
     public function index()
     {
-        //
+        $user_id = auth()->user()->user_id;
+        $incentive_gift = [];
+
+        $employee = User::find($user_id)->employee()->first();
+
+        $employee_id = $employee->employee_id;
+
+        $isEmployeeAnAttorney = EmployeeController::getIsEmployeeAnAttorney();
+
+        $incentive_gift = DB::table('incentives_gift')
+            ->join('incentives', 'incentives_gift.incentive_id', '=', 'incentives.incentive_id')
+            ->join('incentives_gift_transfer', 'incentives_gift.incentives_gift_type_id', '=', 'incentives_gift_transfer.incentives_gift_type_id')
+            ->join('employees AS employees_from', 'incentives_gift_transfer.from_employee_id', '=', 'employees_from.employee_id')
+            ->join('users AS users_from', 'employees_from.user_id', '=', 'users_from.user_id')
+            ->join('employees AS employees_to', 'incentives_gift_transfer.to_employee_id', '=', 'employees_to.employee_id')
+            ->join('users AS users_to', 'employees_to.user_id', '=', 'users_to.user_id')
+            ->orderBy('incentives_gift.created_at', 'desc')
+            ->select([
+                'incentives_gift.incentives_gift_id AS incentives_gift_incentives_gift_id',
+                'incentives_gift.incentives_gift_type_id AS incentives_gift_incentives_gift_type_id',
+                'incentives_gift.incentives_gift_type AS incentives_gift_incentives_gift_type',
+                'incentives_gift.amount AS incentives_gift_total_amount',
+                'incentives_gift.gift_quantity AS incentives_gift_gift_quantity',
+                'incentives_gift.note AS incentives_gift_note',
+                'incentives_gift.created_at AS incentives_gift_created_at',
+
+                'incentives_gift_transfer.amount AS incentives_gift_transfer_amount_per_employee',
+                'incentives_gift_transfer.incentives_gift_transfer_id AS incentives_gift_transfer_incentives_gift_transfer_id',
+                
+                'users_from.user_id AS user_from_id',
+                'users_from.name AS user_from_fullname',
+                'users_from.email AS user_from_email',
+
+                'users_to.user_id AS user_to_id',
+                'users_to.name AS user_to_fullname',
+                'users_to.email AS user_to_email',
+
+                'incentives.name AS incentives_name',
+                'incentives.icon_name AS incentives_icon_name'
+                
+                ]
+            );
+
+        if($isEmployeeAnAttorney){
+            $incentive_gift = $incentive_gift->get();
+        }else{
+            $incentive_gift = $incentive_gift->where('incentives_gift_transfer.to_employee_id', '=', $employee_id)->get();
+        }
+
+        $incentive_gift = $incentive_gift ?? [];
+
+        $processed_incentive_gifts = [];
+
+        foreach ($incentive_gift as $current_incentive_gift) {
+
+            if(!isset($processed_incentive_gifts[$current_incentive_gift->incentives_gift_incentives_gift_type_id])){
+                $processed_incentive_gifts[$current_incentive_gift->incentives_gift_incentives_gift_type_id] = [
+                    'incentives_name' => $current_incentive_gift->incentives_name,
+                    'incentives_icon_name' => $current_incentive_gift->incentives_icon_name,
+                    'user_from_fullname' => $current_incentive_gift->user_from_fullname,
+                    'user_from_email' => $current_incentive_gift->user_from_email,
+                    'incentives_gift_total_amount' => $current_incentive_gift->incentives_gift_total_amount,
+                    'incentives_gift_gift_quantity' => $current_incentive_gift->incentives_gift_gift_quantity,
+                    'incentives_gift_note' => $current_incentive_gift->incentives_gift_note,
+                    'incentives_gift_created_at' => $current_incentive_gift->incentives_gift_created_at,
+                    'incentives_gift_incentives_gift_type_id' => $current_incentive_gift->incentives_gift_incentives_gift_type_id,
+
+                    "gift_distribution" => [
+                        [
+                            'incentives_gift_incentives_gift_id' => $current_incentive_gift->incentives_gift_incentives_gift_id,
+                            'incentives_gift_transfer_incentives_gift_transfer_id' => $current_incentive_gift->incentives_gift_transfer_incentives_gift_transfer_id,
+                            'incentives_gift_incentives_gift_type_id' => $current_incentive_gift->incentives_gift_incentives_gift_type_id,
+                            'incentives_gift_incentives_gift_type' => $current_incentive_gift->incentives_gift_incentives_gift_type,
+                            'incentives_gift_transfer_amount_per_employee' => $current_incentive_gift->incentives_gift_transfer_amount_per_employee,
+                            'user_to_fullname' => $current_incentive_gift->user_to_fullname,
+                            'user_to_email' => $current_incentive_gift->user_to_email,
+                        ]
+                    ]
+                ];
+            }else{
+
+                array_push($processed_incentive_gifts[$current_incentive_gift->incentives_gift_incentives_gift_type_id]['gift_distribution'], [
+                    'incentives_gift_incentives_gift_id' => $current_incentive_gift->incentives_gift_incentives_gift_id,
+                    'incentives_gift_transfer_incentives_gift_transfer_id' => $current_incentive_gift->incentives_gift_transfer_incentives_gift_transfer_id,
+                    'incentives_gift_incentives_gift_type_id' => $current_incentive_gift->incentives_gift_incentives_gift_type_id,
+                    'incentives_gift_incentives_gift_type' => $current_incentive_gift->incentives_gift_incentives_gift_type,
+                    'incentives_gift_transfer_amount_per_employee' => $current_incentive_gift->incentives_gift_transfer_amount_per_employee,
+                    'user_to_fullname' => $current_incentive_gift->user_to_fullname,
+                    'user_to_email' => $current_incentive_gift->user_to_email,
+                ]);
+            }
+
+        }
+
+        // return json_encode($processed_incentive_gifts);
+        
+        return Inertia::render('Gift/index', [    
+            "incentive_gift" => $processed_incentive_gifts
+        ]);
     }
 
     /**

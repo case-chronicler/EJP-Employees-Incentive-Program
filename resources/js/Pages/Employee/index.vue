@@ -154,12 +154,15 @@ const initSendGit_Group = (selected_gift_type) => {
 
 				<div class="mt-6 rounded-lg">
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-						<div
+						<template
 							v-for="user_and_employee in processed_users_and_employees"
 							:key="user_and_employee.user_id"
 						>
 							<!-- component -->
 							<div
+								v-if="
+									$page.props.auth.user.user_id !== user_and_employee.user_id
+								"
 								class="bg-white shadow-md p-6 rounded-2xl border-2 border-gray-50"
 							>
 								<div class="flex flex-col">
@@ -173,19 +176,6 @@ const initSendGit_Group = (selected_gift_type) => {
 											<div>
 												<div class="h-18 w-18 border-2 rounded-full p-3">
 													<EmployeeSvgIcon />
-												</div>
-												<div>
-													<h2
-														class="text-xs mt-2 font-bold text-gray-600 text-center min-h-[20px]"
-													>
-														<span
-															v-if="
-																$page.props.auth.user.user_id ===
-																user_and_employee.user_id
-															"
-															>(YOU)</span
-														>
-													</h2>
 												</div>
 											</div>
 											<div>
@@ -220,11 +210,7 @@ const initSendGit_Group = (selected_gift_type) => {
 									</div>
 
 									<div
-										v-if="
-											isEmployeeAnAttorney &&
-											$page.props.auth.user.user_id !==
-												user_and_employee.user_id
-										"
+										v-if="isEmployeeAnAttorney"
 										class="w-full text-right border-t-2 border-gray-100 py-4 flex items-end justify-end"
 									>
 										<Dropdown>
@@ -260,17 +246,9 @@ const initSendGit_Group = (selected_gift_type) => {
 											<GiftIcon />
 										</button>
 									</div>
-									<div
-										v-else
-										class="w-full text-right border-t-2 border-gray-100 py-4 flex items-end justify-end"
-									>
-										<span class="text-sm texy-gray-500"
-											>(actions not available)</span
-										>
-									</div>
 								</div>
 							</div>
-						</div>
+						</template>
 					</div>
 				</div>
 			</div>

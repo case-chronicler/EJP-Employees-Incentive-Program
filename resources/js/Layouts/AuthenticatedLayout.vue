@@ -43,6 +43,12 @@ const showingNavigationDropdown = ref(false);
 								>
 									Employees
 								</NavLink>
+								<NavLink
+									:href="route('incentive_gift.index')"
+									:active="route().current('incentive_gift.index')"
+								>
+									Gifts
+								</NavLink>
 							</div>
 						</div>
 
@@ -155,6 +161,18 @@ const showingNavigationDropdown = ref(false);
 							:active="route().current('dashboard')"
 						>
 							Dashboard
+						</ResponsiveNavLink>
+						<ResponsiveNavLink
+							:href="route('employee.index')"
+							:active="route().current('employee.index')"
+						>
+							Employees
+						</ResponsiveNavLink>
+						<ResponsiveNavLink
+							:href="route('incentive_gift.index')"
+							:active="route().current('incentive_gift.index')"
+						>
+							Gifts
 						</ResponsiveNavLink>
 					</div>
 
