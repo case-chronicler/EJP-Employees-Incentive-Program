@@ -60,7 +60,7 @@ class EmployeeController extends Controller
         }
     }
 
-    private function fetchEmployeeUserData($user_id = ''){
+    private function fetchEmployeeUserData($user_id = '', $excludedUser = ''){
         $processed_users_and_employees = [];
         $users_and_employees = DB::table('users')
             ->leftJoin('employees', 'users.user_id', '=', 'employees.user_id')
@@ -82,7 +82,12 @@ class EmployeeController extends Controller
 
         if($user_id !== ''){
             $users_and_employees = $users_and_employees
-                ->where('user.user_id', '==', $user_id);
+                ->where('users.user_id', '==', $user_id);
+        }
+
+        if($excludedUser !== ''){
+            $users_and_employees = $users_and_employees
+                ->where('users.user_id', '!=', $excludedUser);
         }
         
         $users_and_employees = $users_and_employees
@@ -126,7 +131,15 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
-        $processed_users_and_employees = $this->fetchEmployeeUserData();
+        
+        $excluded_user_id = '';
+
+        if (auth()->user()) {
+            $excluded_user_id = auth()->user()->user_id ?? '';
+        }
+    
+
+        $processed_users_and_employees = $this->fetchEmployeeUserData('', $excluded_user_id);
         $allPositions = DB::table('positions')->where('position_name', '!=', 'Attorney')
             ->get();
         $isEmployeeAnAttorney = $this->isEmployeeAnAttorney();
