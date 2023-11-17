@@ -1,1 +1,0 @@
-import{_ as o}from"./_plugin-vue_export-helper-c27b6911.js";import{o as c,f as e}from"./app-ffba418b.js";const t={},r={src:"/ejp.png",alt:""};function n(s,_){return c(),e("img",r)}const i=o(t,[["render",n]]);export{i as A};
