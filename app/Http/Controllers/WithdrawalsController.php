@@ -48,9 +48,9 @@ class WithdrawalsController extends Controller
             );
 
         if($isEmployeeAnAttorney){
-            $withdrawals = $withdrawals->get();
+            $withdrawals = $withdrawals->paginate(10);
         }else{
-            $withdrawals = $withdrawals->where('withdrawal_requests.employee_id', '=', $employee_id)->get();
+            $withdrawals = $withdrawals->where('withdrawal_requests.employee_id', '=', $employee_id)->paginate(10);
         }
 
         $withdrawals = $withdrawals ?? [];

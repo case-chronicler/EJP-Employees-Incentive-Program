@@ -17,7 +17,7 @@ import { useModalStore } from "@/Store/modal";
 const modalStore = useModalStore();
 
 const props = defineProps({
-	allWithdrawals: Array,
+	allWithdrawals: Object,
 });
 
 const isEmployeeAnAttorney = usePage().props.isEmployeeAnAttorney;
@@ -58,7 +58,42 @@ const addRole = async (user_id, position_id) => {
 		requestsResult.addRole = processed_users_and_employees;
 	} catch (error) {}
 };
+
+const get_allWithdrawals = computed(() => {
+	return props.allWithdrawals?.data ?? [];
+});
+
+const get_nextPageData = computed(() => {
+	let nextPageData = props.allWithdrawals?.links ?? false;
+
+	if (nextPageData) {
+		nextPageData = nextPageData.find((elem) => {
+			return elem.label == "Next &raquo;";
+		});
+	}
+
+	return nextPageData;
+});
+
+const get_prevPageData = computed(() => {
+	let prevPageData = props.allWithdrawals?.links ?? false;
+
+	if (prevPageData) {
+		prevPageData = prevPageData.find((elem) => {
+			return elem.label == "&laquo; Previous";
+		});
+	}
+
+	return prevPageData;
+});
 </script>
+
+<style>
+body {
+	--tw-bg-opacity: 1 !important;
+	background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
+}
+</style>
 
 <template>
 	<RequestFunds v-if="modalStore.currentModal === 'REQUEST_FUNDS'" />
@@ -73,7 +108,6 @@ const addRole = async (user_id, position_id) => {
 				</h2>
 			</div>
 		</template>
-
 		<div class="my-16">
 			<div class="max-w-7xl mx-auto px-6 lg:px-8 space-y-14">
 				<div class="mb-4" v-if="!isEmployeeAnAttorney">
@@ -87,10 +121,13 @@ const addRole = async (user_id, position_id) => {
 				</div>
 
 				<div class="rounded-lg">
-					<div class="grid grid-cols-1 gap-4" v-if="allWithdrawals.length > 0">
+					<div
+						class="grid grid-cols-1 gap-4"
+						v-if="get_allWithdrawals.length > 0"
+					>
 						<div
 							class="flex items-center justify-center mb-4"
-							v-for="(withdrawal, index) in allWithdrawals"
+							v-for="(withdrawal, index) in get_allWithdrawals"
 							:key="index"
 						>
 							<div class="rounded-xl border p-5 shadow-md w-10/12 bg-white">
@@ -153,6 +190,27 @@ const addRole = async (user_id, position_id) => {
 								</div>
 							</div>
 						</div>
+					</div>
+
+					<div class="my-8">
+						<div class="flex float-right">
+							<!-- Previous Button -->
+							<a
+								:href="get_prevPageData?.url ?? '#'"
+								class="flex items-center justify-center px-4 h-10 text-base font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+							>
+								Previous
+							</a>
+
+							<!-- Next Button -->
+							<a
+								:href="get_nextPageData?.url ?? '#'"
+								class="flex items-center justify-center px-4 h-10 ms-3 text-base font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+							>
+								Next
+							</a>
+						</div>
+						<div class="clear-both"></div>
 					</div>
 				</div>
 			</div>

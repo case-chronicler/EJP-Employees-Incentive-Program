@@ -1,3 +1,3 @@
 <template>
-	<img src="/ejp.png" alt="" />
+	<img src="/images/ejp.png" alt="" />
 </template>

@@ -26,6 +26,29 @@ const formatDate = (date) => {
 };
 </script>
 
+<style>
+#recipent_container::-webkit-scrollbar {
+	width: 8px;
+}
+
+#recipent_container::-webkit-scrollbar-track {
+	background-color: #eee;
+	border-radius: 100px;
+}
+
+#recipent_container::-webkit-scrollbar-thumb {
+	background-color: #54636b8e;
+	border-radius: 100px;
+}
+#recipent_container {
+	scrollbar-width: thin !important;
+}
+
+#recipent_container {
+	overflow-y: auto;
+}
+</style>
+
 <template>
 	<Head title="Gifts History" />
 
@@ -115,9 +138,7 @@ const formatDate = (date) => {
 									<div class="flex -mx-2 mb-6">
 										<div class="w-1/2 px-2">
 											<p class="mb-2 text-xs font-medium">Date sent</p>
-											<span
-												class="inline-block py-1 px-2 bg-gray-50 rounded-full text-xs text-gray-500"
-											>
+											<span class="inline-block text-xs text-gray-500">
 												{{
 													formatDate(
 														current_incentive_gift.incentives_gift_created_at
@@ -138,62 +159,24 @@ const formatDate = (date) => {
 											</span>
 										</div>
 									</div>
-									<template
-										v-if="current_incentive_gift.gift_distribution.length == 1"
-									>
-										<div class="flex mb-6">
-											<User
-												h_class="h-8"
-												w_class="h-8"
-												class="bg-gray-400 rounded-full object-cover object-right"
-											/>
-										</div>
-									</template>
-									<template
-										v-if="current_incentive_gift.gift_distribution.length > 1"
-									>
-										<div class="flex mb-6">
-											<template
-												v-if="
-													current_incentive_gift.gift_distribution.length <= 3
-												"
+
+									<div class="w-full my-4">
+										<p class="mb-2 text-xs font-medium">Recipient</p>
+
+										<div
+											class="max-w-full overflow-y-scroll pb-4 max-h-[50px]"
+											id="recipent_container"
+										>
+											<span
+												v-for="(
+													giftedEmployee, index
+												) in current_incentive_gift.gift_distribution"
+												class="inline-flex items-center mr-3 mb-1 py-1 px-2 bg-gray-50 rounded-full text-xs text-gray-500"
 											>
-												<template
-													v-for="(
-														giftedEmployee, index
-													) in current_incentive_gift.gift_distribution"
-												>
-													<User
-														h_class="h-8"
-														w_class="h-8"
-														:class="{ '-ml-4': index > 0 }"
-														class="bg-gray-400 rounded-full object-cover object-right"
-													/>
-												</template>
-											</template>
-											<template
-												v-if="
-													current_incentive_gift.gift_distribution.length > 3
-												"
-											>
-												<User
-													v-for="i in 3"
-													h_class="h-8"
-													w_class="h-8"
-													:class="{ '-ml-4': i > 0 }"
-													class="bg-gray-400 rounded-full object-cover object-right"
-												/>
-												<div
-													class="flex items-center justify-center w-8 h-8 -ml-2 rounded-full bg-indigo-50 text-xs text-indigo-500"
-												>
-													+
-													{{
-														current_incentive_gift.gift_distribution.length - 3
-													}}
-												</div>
-											</template>
+												{{ giftedEmployee.user_to_email }}
+											</span>
 										</div>
-									</template>
+									</div>
 								</div>
 							</div>
 						</div>

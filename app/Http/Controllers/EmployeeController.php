@@ -60,6 +60,31 @@ class EmployeeController extends Controller
         }
     }
 
+    static function getAllAttorneys() {
+        try {
+    
+            $isEmployeeAnAttorney = DB::table('users')
+                ->leftJoin('employees', 'users.user_id', '=', 'employees.user_id')
+                ->leftJoin('roles', 'employees.employee_id', '=', 'roles.employee_id')
+                ->where("position_id", '=', 1)
+                ->select([
+                    'users.user_id AS user_id',
+                    'users.name AS user_fullname',
+                    'users.email AS user_email',
+                    'users.is_employee AS is_user_employed',
+                    'employees.employee_id AS employee_id',
+                    'employees.balance AS employee_bal',   
+                    'employees.created_at AS employee_created_at',             
+                    'roles.id AS role_id',
+                    ]
+                )->get();
+    
+            return $isEmployeeAnAttorney;
+        } catch (\Throwable $th) {
+            return [];
+        }
+    }
+
     private function fetchEmployeeUserData($user_id = '', $excludedUser = ''){
         $processed_users_and_employees = [];
         $users_and_employees = DB::table('users')

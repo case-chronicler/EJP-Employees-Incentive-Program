@@ -46,14 +46,13 @@ const fundRequest_submit = () => {
 	if (fundsRequestForm) {
 		form.post(route("withdrawal_requests.store"), {
 			onSuccess: () => {
-				form.reset();
-				modalStore.closeModal();
-
-				Swal.fire({
-					title: "Withdrawal request sent!",
-					text: "Your request for fund release has been sent to the attorney",
-					icon: "success",
-				});
+				// form.reset();
+				// modalStore.closeModal();
+				// Swal.fire({
+				// 	title: "Withdrawal request sent!",
+				// 	text: "Your request for fund release has been sent to the attorney",
+				// 	icon: "success",
+				// });
 			},
 		});
 	}
@@ -181,7 +180,8 @@ onMounted(() => {
 							type="button"
 							class="inline-flex w-full justify-center rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 sm:ml-3 sm:w-auto"
 							:class="{
-								'hover:cursor-not-allowed': !isAmountAppropriate,
+								'hover:cursor-not-allowed':
+									!isAmountAppropriate || form.processing,
 							}"
 						>
 							Send request
