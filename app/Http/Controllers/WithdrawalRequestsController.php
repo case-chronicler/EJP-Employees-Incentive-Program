@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Withdrawal_requests;
-use Illuminate\Http\Request;
-
+use App\Events\WithdrawalRequestUpdated;
 use App\Models\User;
 use App\Models\Employee;
+
+
+use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -209,7 +211,11 @@ class WithdrawalRequestsController extends Controller
                     'status' => 'success',
                 ]);
             
-            DB::commit(); 
+            $withdrawal_request = Withdrawal_requests::where('withdrawal_request_link_id', $withdrawal_request_id)->first();
+            WithdrawalRequestUpdated::dispatch($withdrawal_request);
+            
+            DB::commit();
+            
         } catch (\Throwable $th) {
             DB::rollBack();
             throw new Exception('action not successful');
@@ -234,7 +240,11 @@ class WithdrawalRequestsController extends Controller
     
             $employee->increment('balance', $amount);
             
+            $withdrawal_request = Withdrawal_requests::where('withdrawal_request_link_id', $withdrawal_request_id)->first();
+            WithdrawalRequestUpdated::dispatch($withdrawal_request);
+            
             DB::commit(); 
+
         } catch (\Throwable $th) {
             DB::rollBack();
             throw new Exception('action not successful');

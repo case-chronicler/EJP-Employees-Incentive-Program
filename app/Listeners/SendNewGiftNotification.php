@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use App\Models\Incentives_gift_transfer;
 use App\Notifications\newIndividualGift;
 
+
 class SendNewGiftNotification
 {
     /**
@@ -36,5 +37,7 @@ class SendNewGiftNotification
         foreach ( $Incentives_gift_transfers as $Incentives_gift_transfer) {
             $Incentives_gift_transfer->notify(new newIndividualGift($event->Incentives_gift_transfer));
         }
+        
+
     }
 }

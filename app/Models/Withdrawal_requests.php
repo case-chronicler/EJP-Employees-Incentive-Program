@@ -10,9 +10,13 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 use App\Events\NewWithdrawalRequest;
+use App\Events\WithdrawalRequestUpdated;
 
 use App\Notifications\NewWithdrawalRequest_Attorney;
 use App\Notifications\NewWithdrawalRequest_Employee;
+
+use App\Notifications\WithdrawalRequestUpdated_Attorney;
+use App\Notifications\WithdrawalRequestUpdated_Employee;
 
 use App\Http\Controllers\EmployeeController;
 
@@ -54,7 +58,8 @@ class Withdrawal_requests extends Model
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
     }
 
-    public function routeNotificationForMail(NewWithdrawalRequest_Attorney | NewWithdrawalRequest_Employee $notification): array|string
+    public function routeNotificationForMail(
+        NewWithdrawalRequest_Attorney | NewWithdrawalRequest_Employee | WithdrawalRequestUpdated_Attorney | WithdrawalRequestUpdated_Employee $notification): array|string
     {   
         $forAttorney = $notification->for_attorney;
         

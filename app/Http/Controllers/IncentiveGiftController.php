@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\NewGift_Attorney;
+
 use App\Models\Employee;
 use App\Models\Incentive_gift;
 use App\Models\User;
@@ -184,7 +186,78 @@ class IncentiveGiftController extends Controller
      */
     public function show(Incentive_gift $incentive_gift)
     {
-        //
+        $incentive_gift_type_id = request()->incentive_gift_type_id;
+
+        $incentiveData = DB::table('incentives_gift')
+                ->join('incentives', 'incentives_gift.incentive_id', '=', 'incentives.incentive_id')
+                ->join('incentives_gift_transfer', 'incentives_gift.incentives_gift_type_id', '=', 'incentives_gift_transfer.incentives_gift_type_id')
+                ->join('employees AS employees_from', 'incentives_gift_transfer.from_employee_id', '=', 'employees_from.employee_id')
+                ->join('users AS users_from', 'employees_from.user_id', '=', 'users_from.user_id')
+                ->join('employees AS employees_to', 'incentives_gift_transfer.to_employee_id', '=', 'employees_to.employee_id')
+                ->join('users AS users_to', 'employees_to.user_id', '=', 'users_to.user_id')
+                ->orderBy('incentives_gift.created_at', 'desc')
+                ->select([
+                    'incentives_gift.incentives_gift_id AS incentives_gift_incentives_gift_id',
+                    'incentives_gift.incentives_gift_type_id AS incentives_gift_incentives_gift_type_id',
+                    'incentives_gift.incentives_gift_type AS incentives_gift_incentives_gift_type',
+                    'incentives_gift.amount AS incentives_gift_total_amount',
+                    'incentives_gift.gift_quantity AS incentives_gift_gift_quantity',
+                    'incentives_gift.note AS incentives_gift_note',
+                    'incentives_gift.created_at AS incentives_gift_created_at',
+
+                    'incentives_gift_transfer.amount AS incentives_gift_transfer_amount_per_employee',
+                    'incentives_gift_transfer.incentives_gift_transfer_id AS incentives_gift_transfer_incentives_gift_transfer_id',
+                    
+                    'users_from.user_id AS user_from_id',
+                    'users_from.name AS user_from_fullname',
+                    'users_from.email AS user_from_email',
+
+                    'users_to.user_id AS user_to_id',
+                    'users_to.name AS user_to_fullname',
+                    'users_to.email AS user_to_email',
+
+                    'incentives.name AS incentives_name',
+                    'incentives.icon_name AS incentives_icon_name'
+                    
+                    ]
+                )->where('incentives_gift.incentives_gift_type_id', '=', $incentive_gift_type_id)
+                ->latest('incentives_gift.created_at')                
+                ->get();
+
+                
+        $incentiveData_processed = [
+            "recipient" => [],
+            "sender" => [],
+            'incentives_gift_incentives_gift_type' => '',
+            'incentives_gift_gift_quantity' => '',
+            'incentives_gift_note' => '',
+            'incentives_gift_created_at' => '',
+            
+            'incentives_gift_transfer_amount_per_employee' => '',
+            'incentives_name' => '',
+            'incentives_icon_name' => '',
+        ];
+
+        for ($i=0; $i < count($incentiveData) ; $i++) { 
+            $elem = $incentiveData[$i];
+                        
+            array_push($incentiveData_processed['sender'], $elem->user_from_email);
+            array_push($incentiveData_processed['recipient'], $elem->user_to_email);
+
+            $incentiveData_processed['incentives_gift_incentives_gift_type'] = $elem->incentives_gift_incentives_gift_type;
+            $incentiveData_processed['incentives_gift_gift_quantity'] = $elem->incentives_gift_gift_quantity;
+            $incentiveData_processed['incentives_gift_note'] = $elem->incentives_gift_note;
+            $incentiveData_processed['incentives_gift_created_at'] = $elem->incentives_gift_created_at;
+            
+            $incentiveData_processed['incentives_gift_transfer_amount_per_employee'] = $elem->incentives_gift_transfer_amount_per_employee;
+
+            $incentiveData_processed['incentives_name'] = $elem->incentives_name;
+            $incentiveData_processed['incentives_icon_name'] = $elem->incentives_icon_name;
+        }        
+
+        return Inertia::render('Gift/single', [    
+            'incentiveData_processed' => $incentiveData_processed,
+        ]);
     }
 
     /**
@@ -294,8 +367,8 @@ class IncentiveGiftController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'general' => 'Sorry, we are unable to process your request. Please try again'
-                // 'general' => $th->getMessage()
+                // 'general' => 'Sorry, we are unable to process your request. Please try again'
+                'general' => $th->getMessage()
             ]);
         }
         
@@ -362,16 +435,17 @@ class IncentiveGiftController extends Controller
 
                 Employee::find($receiver_user_id)->increment('balance', $gift_price_per_employee);
             }
-    
 
+            $employee = Employee::find($sender_employee->employee_id);
+            $employee->notify(new NewGift_Attorney($newIncentiveGift));
             
             DB::commit(); 
     
         } catch (\Throwable $th) {
             DB::rollBack();
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'general' => 'Sorry, we are unable to process your request. Please try again'
-                // 'general' => $th->getMessage()
+                // 'general' => 'Sorry, we are unable to process your request. Please try again'
+                'general' => $th->getMessage()
             ]);
         }
         

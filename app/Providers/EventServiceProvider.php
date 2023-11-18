@@ -16,6 +16,9 @@ use App\Listeners\SendNewGiftNotification;
 use App\Events\NewWithdrawalRequest;
 use App\Listeners\SendNewWithdrawalRequestNotification;
 
+use App\Events\WithdrawalRequestUpdated;
+use App\Listeners\SendWithdrawalRequestUpdatedNotification;
+
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -35,6 +38,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         NewWithdrawalRequest::class => [
             SendNewWithdrawalRequestNotification::class,
+        ],
+        WithdrawalRequestUpdated::class => [
+            SendWithdrawalRequestUpdatedNotification::class,
         ],
 
         

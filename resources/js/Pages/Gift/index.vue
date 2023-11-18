@@ -16,13 +16,18 @@ const props = defineProps({
 });
 
 const formatDate = (date) => {
-	const options = { day: "numeric", month: "long", year: "numeric" };
+	try {
+		const options = { day: "numeric", month: "long", year: "numeric" };
 
-	const today = new Date(date);
-	const formattedDate = new Intl.DateTimeFormat("en-US", options).format(today);
+		const today = new Date(date);
+		const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+			today
+		);
 
-	console.log(formattedDate);
-	return formattedDate;
+		return formattedDate;
+	} catch (error) {
+		return "";
+	}
 };
 </script>
 
@@ -68,7 +73,7 @@ const formatDate = (date) => {
 							v-for="(current_incentive_gift, key) in incentive_gift"
 							:key="key"
 						>
-							<div class="bg-white shadow rounded overflow-hidden">
+							<div class="bg-white shadow rounded-2xl overflow-hidden">
 								<div class="pt-6 px-6 mb-10 flex justify-between items-center">
 									<span
 										class="inline-flex items-center justify-center p-2 w-[auto] h-12 bg-gray-100 rounded"

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PositionController;
@@ -32,9 +33,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [Dashboard::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::resource('employee', EmployeeController::class)
     ->only(['index', 'store', 'update'])
@@ -63,7 +62,7 @@ Route::resource('withdrawals', WithdrawalsController::class)
 Route::middleware('auth')->group(function () {
     
     Route::get('/incentive_gift', [IncentiveGiftController::class, 'index'])->name('incentive_gift.index');
-    Route::get('/incentive_gift/{incentive_gift_id}', [IncentiveGiftController::class, 'show'])->name('incentive_gift.show');
+    Route::get('/incentive_gift/{incentive_gift_type_id}', [IncentiveGiftController::class, 'show'])->name('incentive_gift.show');
 
     Route::post('/withdrawal_requests', [WithdrawalRequestsController::class, 'store'])->name('withdrawal_requests.store');
 
