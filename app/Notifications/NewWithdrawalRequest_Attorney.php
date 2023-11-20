@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Illuminate\Support\HtmlString;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -13,6 +14,7 @@ class NewWithdrawalRequest_Attorney extends Notification
     use Queueable;
 
     public $Withdrawal_requests = null;
+    public $sender = null;
     public $for_attorney = null;
 
     /**
@@ -24,6 +26,9 @@ class NewWithdrawalRequest_Attorney extends Notification
     {
         //
         $this->Withdrawal_requests =  $new_W_Request;
+        $this->sender =  $this->Withdrawal_requests->employee()
+            ->join('users', 'employees.user_id', 'users.user_id' )            
+            ->first();
         $this->for_attorney =  true;
     }
 
@@ -47,10 +52,23 @@ class NewWithdrawalRequest_Attorney extends Notification
     public function toMail($notifiable)
     {
 
+        // print_r(json_encode([
+        //     'Atorney',
+        //     $this->Withdrawal_requests,
+        //     $this->sender,
+        // ]));
+
+        // die();
+
+
+        $withdrawal_requests_link = route('withdrawal_requests.show', ["withdrawal_request_id" => $this->Withdrawal_requests->withdrawal_request_link_id]);
+
         return (new MailMessage)
-                    ->line('For Attorney')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                ->subject("Withdrawal Request - Action Required")
+                ->line(new HtmlString("I hope this email finds you well. A withdrawal request has been submitted by <b>".$this->sender->name."</b> for <b>USD ".$this->Withdrawal_requests->amount."</b>. "))
+                ->line("Click the button review this request and process it as soon as possible. If you require any additional information or have questions, don't hesitate to reach out to ".$this->sender->name."(".$this->sender->email.") directly.")
+                ->action('Withdrawal', $withdrawal_requests_link)
+                ->line("Thanks");
     }
 
     /**

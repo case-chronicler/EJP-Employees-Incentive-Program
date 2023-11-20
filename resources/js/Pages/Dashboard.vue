@@ -52,6 +52,7 @@ const formatDate = (date) => {
 								Recent Withdrawal Requests
 							</h4>
 							<Link
+								v-if="withdrawal_request.length != 0"
 								as="button"
 								class="linear rounded-[20px] bg-lightPrimary px-4 py-2 text-base font-medium text-brand-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200"
 								:href="route('withdrawals.index')"
@@ -59,7 +60,16 @@ const formatDate = (date) => {
 								See all
 							</Link>
 						</div>
-						<div class="w-full overflow-x-scroll px-4 md:overflow-x-hidden">
+						<div
+							v-if="withdrawal_request.length == 0"
+							class="min-h-[30vh] flex items-center justify-center"
+						>
+							<div>No data found</div>
+						</div>
+						<div
+							v-else
+							class="w-full overflow-x-scroll px-4 md:overflow-x-hidden min-h-[30vh]"
+						>
 							<table
 								role="table"
 								class="w-full min-w-[500px] overflow-x-scroll"
@@ -175,6 +185,7 @@ const formatDate = (date) => {
 							</div>
 
 							<Link
+								v-if="incentive_gift.length != 0"
 								class="inline-flex items-center shrink-0 justify-center w-8 h-8 rounded-full text-white bg-gray-900 focus:outline-none"
 								:href="route('incentive_gift.index')"
 							>
@@ -196,7 +207,13 @@ const formatDate = (date) => {
 								</svg>
 							</Link>
 						</div>
-						<div aria-label="content" class="mt-9 grid gap-2.5">
+						<div
+							v-if="incentive_gift.length == 0"
+							class="min-h-[30vh] flex items-center justify-center"
+						>
+							<div>No data found</div>
+						</div>
+						<div v-else aria-label="content" class="mt-9 grid gap-2.5">
 							<Link
 								:href="
 									route(

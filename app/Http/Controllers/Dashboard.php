@@ -45,7 +45,7 @@ class Dashboard extends Controller
                     'incentives.name AS incentives_name',
                     'incentives.icon_name AS incentives_icon_name'                    
                     ]
-                );
+                )->groupBy('incentives_gift.incentives_gift_type_id');
 
         if(!$isLoggedInUserAnAttorney){
             $incentive_gift = $incentive_gift->where('incentives_gift_transfer.to_employee_id', '=', $employee->employee_id);
@@ -82,7 +82,7 @@ class Dashboard extends Controller
         }
 
         $withdrawal_request = $withdrawal_request->latest('withdrawal_requests.created_at')
-                ->limit(6)
+                ->limit(5)
                 ->get();
 
        return Inertia::render('Dashboard', [    

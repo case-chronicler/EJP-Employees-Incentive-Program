@@ -70,16 +70,19 @@ class IncentiveGiftController extends Controller
             );
 
         if($isEmployeeAnAttorney){
-            $incentive_gift = $incentive_gift->get();
+            $incentive_gift = $incentive_gift->paginate(6);
         }else{
-            $incentive_gift = $incentive_gift->where('incentives_gift_transfer.to_employee_id', '=', $employee_id)->get();
+            $incentive_gift = $incentive_gift->where('incentives_gift_transfer.to_employee_id', '=', $employee_id)->paginate(6);
         }
 
-        $incentive_gift = $incentive_gift ?? [];
+        // return json_encode($incentive_gift->query);
+        // die();
+
+        $incentive_gift_data = $incentive_gift->items() ?? [];
 
         $processed_incentive_gifts = [];
 
-        foreach ($incentive_gift as $current_incentive_gift) {
+        foreach ($incentive_gift_data as $current_incentive_gift) {
 
             if(!isset($processed_incentive_gifts[$current_incentive_gift->incentives_gift_incentives_gift_type_id])){
                 $processed_incentive_gifts[$current_incentive_gift->incentives_gift_incentives_gift_type_id] = [
@@ -123,7 +126,13 @@ class IncentiveGiftController extends Controller
         // return json_encode($processed_incentive_gifts);
         
         return Inertia::render('Gift/index', [    
-            "incentive_gift" => $processed_incentive_gifts
+            "incentive_gift" => [
+                'data' => $processed_incentive_gifts,
+                'links' => [
+                    'prev' => $incentive_gift->previousPageUrl() ?? false,
+                    'next' => $incentive_gift->nextPageUrl() ?? false
+                ],
+            ]
         ]);
     }
 
@@ -234,22 +243,29 @@ class IncentiveGiftController extends Controller
             'incentives_gift_created_at' => '',
             
             'incentives_gift_transfer_amount_per_employee' => '',
+            'incentives_gift_total_amount' => '',
             'incentives_name' => '',
             'incentives_icon_name' => '',
         ];
 
         for ($i=0; $i < count($incentiveData) ; $i++) { 
             $elem = $incentiveData[$i];
-                        
-            array_push($incentiveData_processed['sender'], $elem->user_from_email);
-            array_push($incentiveData_processed['recipient'], $elem->user_to_email);
 
+            if(! in_array($elem->user_from_email, $incentiveData_processed['sender'])){
+                array_push($incentiveData_processed['sender'], $elem->user_from_email);
+            }
+
+            if(! in_array($elem->user_to_email, $incentiveData_processed['recipient'])){
+                array_push($incentiveData_processed['recipient'], $elem->user_to_email);
+            }
+                                    
             $incentiveData_processed['incentives_gift_incentives_gift_type'] = $elem->incentives_gift_incentives_gift_type;
             $incentiveData_processed['incentives_gift_gift_quantity'] = $elem->incentives_gift_gift_quantity;
             $incentiveData_processed['incentives_gift_note'] = $elem->incentives_gift_note;
             $incentiveData_processed['incentives_gift_created_at'] = $elem->incentives_gift_created_at;
             
             $incentiveData_processed['incentives_gift_transfer_amount_per_employee'] = $elem->incentives_gift_transfer_amount_per_employee;
+            $incentiveData_processed['incentives_gift_total_amount'] = $elem->incentives_gift_total_amount;
 
             $incentiveData_processed['incentives_name'] = $elem->incentives_name;
             $incentiveData_processed['incentives_icon_name'] = $elem->incentives_icon_name;
@@ -361,6 +377,9 @@ class IncentiveGiftController extends Controller
             ]);
 
             Employee::find($receiver_user_id)->increment('balance', $gift_total_price);
+
+            $employee = Employee::find($sender_employee->employee_id);
+            $employee->notify(new NewGift_Attorney($newIncentiveGift));
             
             DB::commit(); 
     
@@ -391,6 +410,7 @@ class IncentiveGiftController extends Controller
     
             $gift_price_per_employee = (float) $gift_price_per_employee;
             $gift_total_price = (float) $gift_total_price;
+
     
             if(count($employees) === 0 ){
                 throw \Illuminate\Validation\ValidationException::withMessages([
@@ -398,16 +418,7 @@ class IncentiveGiftController extends Controller
                 ]);
             }
     
-            $incentive = Incentives::find($gift_id);
-                
-            $calculated_total_price = count($employees) * $gift_price_per_employee;
-            $calculated_total_price = (float) $calculated_total_price;
-    
-            if($gift_total_price !== $calculated_total_price){
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'general' => "We experienced an error while sending your gift. Please try again"
-                ]);
-            }
+            $incentive = Incentives::find($gift_id);                     
     
             $hashSeed = now() . rand(1,1000);            
             $incentives_gift_type_id = "group_".hash('sha256', $hashSeed);

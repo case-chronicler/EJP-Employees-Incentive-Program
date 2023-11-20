@@ -46,13 +46,13 @@ const fundRequest_submit = () => {
 	if (fundsRequestForm) {
 		form.post(route("withdrawal_requests.store"), {
 			onSuccess: () => {
-				// form.reset();
-				// modalStore.closeModal();
-				// Swal.fire({
-				// 	title: "Withdrawal request sent!",
-				// 	text: "Your request for fund release has been sent to the attorney",
-				// 	icon: "success",
-				// });
+				form.reset();
+				modalStore.closeModal();
+				Swal.fire({
+					title: "Withdrawal request sent!",
+					text: "Your request for fund release has been sent to the attorney",
+					icon: "success",
+				});
 			},
 		});
 	}

@@ -130,7 +130,7 @@ body {
 							v-for="(withdrawal, index) in get_allWithdrawals"
 							:key="index"
 						>
-							<div class="rounded-xl border p-5 shadow-md w-10/12 bg-white">
+							<div class="rounded-xl border p-5 shadow-md w-full bg-white">
 								<div class="flex w-full items-center justify-between mb-6">
 									<div class="flex items-center space-x-3">
 										<div

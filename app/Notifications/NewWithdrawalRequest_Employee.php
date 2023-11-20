@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Illuminate\Support\HtmlString;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -13,6 +14,7 @@ class NewWithdrawalRequest_Employee extends Notification
     use Queueable;
 
     public $Withdrawal_requests = null;
+    public $sender = null;
     public $for_attorney = null;
 
     /**
@@ -24,6 +26,9 @@ class NewWithdrawalRequest_Employee extends Notification
     {
         //
         $this->Withdrawal_requests =  $new_W_Request;
+        $this->sender =  $this->Withdrawal_requests->employee()
+            ->join('users', 'employees.user_id', 'users.user_id' )            
+            ->first();
         $this->for_attorney =  false;
     }
 
@@ -45,11 +50,16 @@ class NewWithdrawalRequest_Employee extends Notification
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
-    {
+    {        
+
+        $withdrawal_requests_link = route('withdrawal_requests.show', ["withdrawal_request_id" => $this->Withdrawal_requests->withdrawal_request_link_id]);
+
         return (new MailMessage)
-                    ->line('For employee.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                    ->subject("Withdrawal Request Submitted")
+                ->line(new HtmlString("I hope this message finds you well. I wanted to inform you that I have submitted a withdrawal request for <b>USD ".$this->Withdrawal_requests->amount."</b>. "))
+                ->line("Click the button view that status of your request.")
+                ->action('Withdrawal', $withdrawal_requests_link)
+                ->line("Thanks");
     }
 
     /**

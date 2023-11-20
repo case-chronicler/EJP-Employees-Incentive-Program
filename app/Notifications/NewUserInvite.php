@@ -43,9 +43,8 @@ class NewUserInvite extends Notification
     {
         $invite_link_url = route('register', ["invite_link" => $this->invite->invite_link_ref]);
         
-        // url(`/register` , ["invite_link" => $this->invite->invite_link_ref]);
-
         return (new MailMessage)
+                    ->subject('Welcome to E-Justice Project employees incentive program! 🌟')
                     ->line('You have have been invited to complete you registration on the E-Justice Project employees program. Click on the link below to proceed.')
                     ->line("\n Please ignore this, if you did not do anything to warrant this message.")
                     ->action('Complete your registration', $invite_link_url)

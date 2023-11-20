@@ -84,14 +84,34 @@ const formatDate = (date) => {
 											/>
 										</div>
 										<div>
-											<h5 class="text-xl text-gray-700 font-bold">
+											<h5 class="text-xl text-gray-700 font-bold mb-2">
 												{{ incentiveData_processed.incentives_name }}
+												<span
+													class="inline-block py-1 px-2 ml-2 text-gray-500 text-sm leading-6 bg-gray-200 rounded uppercase"
+												>
+													{{
+														incentiveData_processed.incentives_gift_incentives_gift_type
+													}}</span
+												>
 											</h5>
 											<span class="text-gray-500 inline-flex items-center">
-												<Coin class="mr-1" w_class="w-[auto]" h_class="h-4" />
+												<Coin class="mr-1" w_class="w-[auto]" h_class="h-5" />
 												{{
-													incentiveData_processed.incentives_gift_transfer_amount_per_employee
+													incentiveData_processed.incentives_gift_total_amount
 												}}
+
+												<span
+													v-if="
+														incentiveData_processed.incentives_gift_incentives_gift_type ==
+														'group'
+													"
+												>
+													<span class="mx-2">|</span>
+													each recipient got
+													{{
+														incentiveData_processed.incentives_gift_transfer_amount_per_employee
+													}}
+												</span>
 											</span>
 										</div>
 									</div>
@@ -176,21 +196,15 @@ const formatDate = (date) => {
 												class="block py-2 px-3 text-sm leading-6 text-gray-500 font-medium rounded-lg transition duration-100 flex justify-between"
 											>
 												<span> Sender(s) </span>
-												<span
-													class="text-xs"
-													v-for="(
-														sender, index
-													) in incentiveData_processed.sender"
-												>
-													{{ sender ?? "" }}
-
+												<span class="text-right">
 													<span
-														v-if="
-															incentiveData_processed.sender.length !==
-															index + 1
-														"
-														>" | "</span
+														class="text-xs inline-block py-1 px-2 m-1 text-gray-500 leading-6 bg-gray-200 rounded-full"
+														v-for="(
+															sender, index
+														) in incentiveData_processed.sender"
 													>
+														{{ sender ?? "" }}
+													</span>
 												</span>
 											</div>
 										</li>

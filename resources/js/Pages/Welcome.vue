@@ -93,9 +93,9 @@ defineProps({
 							<div class="lg:ml-auto lg:text-right">
 								<div class="relative z-10 inline-block pt-11 lg:pt-0">
 									<img
-										src="https://cdn.tailgrids.com/2.0/image/marketing/images/hero/hero-image-01.png"
+										src="/images/hero_three.png"
 										alt="hero"
-										class="max-w-full lg:ml-auto"
+										class="max-w-full lg:ml-auto rounded-tl-[50px] border-4 border-[#D8B04B]"
 									/>
 									<span class="absolute -left-8 -bottom-8 z-[-1]">
 										<svg
