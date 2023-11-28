@@ -9,6 +9,7 @@ import SendGiftUserSelect from "@/Modals/parts/SendGiftUserSelect.vue";
 
 import { useModalStore } from "@/Store/modal";
 
+import Coin from "@/Components/icons/coin.vue";
 import Add from "@/Components/icons/gifts/Add.vue";
 import Coffee from "@/Components/icons/gifts/Coffee.vue";
 import Cupcake from "@/Components/icons/gifts/Cupcake.vue";
@@ -221,7 +222,7 @@ onMounted(() => {
 								<div
 									v-for="(gift, index) in giftsAndPrices_new.individual"
 									:key="index"
-									class="w-12 h-12 hover:cursor-pointer"
+									class="w-16 h-16 hover:cursor-pointer"
 								>
 									<input
 										type="radio"
@@ -232,40 +233,56 @@ onMounted(() => {
 										class="hidden"
 									/>
 									<label :for="gift.name + index">
-										<div
-											v-if="gift.name === 'coffee'"
-											:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-											class="hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 text-center inline-flex items-center"
-										>
-											<Coffee />
+										<div class="flex flex-col">
+											<div
+												v-if="gift.name === 'coffee'"
+												:class="{ 'bg-gray-300 ': gift_name === gift.name }"
+												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
+											>
+												<Coffee />
+											</div>
+											<div
+												v-if="gift.name === 'cupcake'"
+												:class="{ 'bg-gray-300 ': gift_name === gift.name }"
+												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
+											>
+												<Cupcake />
+											</div>
+											<div
+												v-if="gift.name === 'flower'"
+												:class="{ 'bg-gray-300 ': gift_name === gift.name }"
+												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
+											>
+												<Flower />
+											</div>
+											<div
+												v-if="gift.name === 'silver_pen'"
+												:class="{ 'bg-gray-300 ': gift_name === gift.name }"
+												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
+											>
+												<QuillSliverPen />
+											</div>
+											<div
+												class="text-xs font-semibold text-gray-500 text-center"
+											>
+												<span class="inline-flex items-center mt-2">
+													<Coin
+														class=""
+														w_class="w-[10px]"
+														h_class="h-[auto]"
+													/>
+												</span>
+												{{ gift.unit_price }}
+											</div>
 										</div>
-										<div
-											v-if="gift.name === 'cupcake'"
-											:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-											class="hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 text-center inline-flex items-center"
-										>
-											<Cupcake />
-										</div>
-										<div
-											v-if="gift.name === 'flower'"
-											:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-											class="hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 text-center inline-flex items-center"
-										>
-											<Flower />
-										</div>
+
+										<!-- Pizza -->
 										<div
 											v-if="gift.name === 'pizza'"
 											:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-											class="hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 text-center inline-flex items-center"
+											class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
 										>
 											<Pizza />
-										</div>
-										<div
-											v-if="gift.name === 'silver_pen'"
-											:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-											class="hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 text-center inline-flex items-center"
-										>
-											<QuillSliverPen />
 										</div>
 									</label>
 								</div>

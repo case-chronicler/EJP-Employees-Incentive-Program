@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9cb637b503422825e6333d4e391c5cab",
+    "content-hash": "e21492541e59d301d7caff27f6b3d849",
     "packages": [
         {
             "name": "brick/math",
@@ -1287,6 +1287,62 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2023-10-03T13:02:30+00:00"
+        },
+        {
+            "name": "laravel/legacy-factories",
+            "version": "v1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/legacy-factories.git",
+                "reference": "cc6720da81094c82ea9f4737d615dd3d71f7f43d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/legacy-factories/zipball/cc6720da81094c82ea9f4737d615dd3d71f7f43d",
+                "reference": "cc6720da81094c82ea9f4737d615dd3d71f7f43d",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/macroable": "^8.0|^9.0|^10.0",
+                "php": "^7.3|^8.0",
+                "symfony/finder": "^3.4|^4.0|^5.0|^6.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Illuminate\\Database\\Eloquent\\LegacyFactoryServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "helpers.php"
+                ],
+                "psr-4": {
+                    "Illuminate\\Database\\Eloquent\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The legacy version of the Laravel Eloquent factories.",
+            "homepage": "http://laravel.com",
+            "support": {
+                "issues": "https://github.com/laravel/framework/issues",
+                "source": "https://github.com/laravel/framework"
+            },
+            "time": "2023-01-09T14:49:00+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -2943,6 +2999,81 @@
             "time": "2023-10-14T21:56:36+00:00"
         },
         {
+            "name": "qoraiche/laravel-mail-editor",
+            "version": "v4.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Qoraiche/laravel-mail-editor.git",
+                "reference": "6f65f612643dfa09b47bca70ec17192379a508e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Qoraiche/laravel-mail-editor/zipball/6f65f612643dfa09b47bca70ec17192379a508e4",
+                "reference": "6f65f612643dfa09b47bca70ec17192379a508e4",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^9.0",
+                "laravel/legacy-factories": "^1.3",
+                "reecem/mocker": "^1.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4.4",
+                "orchestra/testbench": "^7.0",
+                "phpunit/phpunit": "^9.5.10",
+                "sempro/phpunit-pretty-print": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Qoraiche\\MailEclipse\\MailEclipseServiceProvider"
+                    ],
+                    "aliases": {
+                        "MailEclipse": "Qoraiche\\MailEclipse\\Facades\\MailEclipse"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Qoraiche\\MailEclipse\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "yassine qoraiche",
+                    "email": "qoraicheofficiel@hotmail.com",
+                    "homepage": "https://github.com/qoraiche"
+                }
+            ],
+            "description": "Laravel Mailable Editor",
+            "homepage": "https://github.com/Qoraiche/laravel-mail-editor",
+            "keywords": [
+                "laravel",
+                "laravel-mail",
+                "laravel-mailable",
+                "mailEclipse",
+                "mailable",
+                "mailable-editor",
+                "markdown"
+            ],
+            "support": {
+                "issues": "https://github.com/Qoraiche/laravel-mail-editor/issues",
+                "source": "https://github.com/Qoraiche/laravel-mail-editor/tree/v4.0.5"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/streamaps",
+                    "type": "custom"
+                }
+            ],
+            "time": "2023-04-03T13:16:49+00:00"
+        },
+        {
             "name": "ralouphie/getallheaders",
             "version": "3.0.3",
             "source": {
@@ -3167,6 +3298,75 @@
                 }
             ],
             "time": "2023-04-15T23:01:58+00:00"
+        },
+        {
+            "name": "reecem/mocker",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ReeceM/mocker.git",
+                "reference": "e51ad25f2ef6e13a427fde06552e64955f4dc3e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ReeceM/mocker/zipball/e51ad25f2ef6e13a427fde06552e64955f4dc3e1",
+                "reference": "e51ad25f2ef6e13a427fde06552e64955f4dc3e1",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/filesystem": "^5.6|^6.0|^7.0|^8.0|^9.0|^10.0",
+                "illuminate/support": "^5.6|^6.0|^7.0|^8.0|^9.0|^10.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.5|^4.0|^7.0",
+                "phpunit/phpunit": "^7.5|^8.0|^9.5.10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ReeceM\\Mocker\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ReeceM",
+                    "email": "zsh.rce@gmail.com",
+                    "homepage": "https://githib.com/reecem"
+                }
+            ],
+            "description": "Mock class constructor args based on the reflection class",
+            "homepage": "https://github.com/reecem/mocker",
+            "keywords": [
+                "helper",
+                "laravel",
+                "mocker",
+                "mockery",
+                "reecem",
+                "testing"
+            ],
+            "support": {
+                "issues": "https://github.com/ReeceM/mocker/issues",
+                "source": "https://github.com/ReeceM/mocker/tree/v1.2.1"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/iexistin3d",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/reecem",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/reecem",
+                    "type": "ko_fi"
+                }
+            ],
+            "time": "2023-04-03T13:19:00+00:00"
         },
         {
             "name": "symfony/console",

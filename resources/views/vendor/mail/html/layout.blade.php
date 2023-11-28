@@ -39,6 +39,10 @@ width: 100% !important;
 <!-- Body content -->
 <tr>
 <td class="content-cell">
+    @component('mail::embed', ['url' => 'data:image/svg+xml;base64,' . $message->embeds['svg']['data']])
+        <img src="{{ $message->embeds['svg']['url'] }}" alt="SVG Image">
+    @endcomponent
+    
 {{ Illuminate\Mail\Markdown::parse($slot) }}
 
 {{ $subcopy ?? '' }}
