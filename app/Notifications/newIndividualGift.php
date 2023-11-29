@@ -51,13 +51,16 @@ class newIndividualGift extends Notification
      */
     public function toMail($notifiable)
     {
+        // print_r(json_encode($notifiable));
+        // die();
+        return new \App\Mail\IndividiualgiftNewMail($notifiable);
 
-        return (new MailMessage)
-                    ->subject("Congratulations! You've Received a Special Recognition at E-Justice Project 🎉")
-                    ->greeting('Hurray!')
-                    ->line("I am thrilled to inform you that your hard work and dedication have not gone unnoticed. A special recognition has been awarded to you for your exceptional contributions to the team.")
-                    ->line(new HtmlString("<p>As a token of appreciation, a <b>".$this->incentiveData->name."</b> has been sent to you. Your efforts have made a significant impact, and we want to celebrate your success.</p>"))
-                    ->line("Once again, congratulations on this well-deserved recognition. We are proud to have you as part of the E-Justice Project team");
+        // return (new MailMessage)
+        //             ->subject("Congratulations! You've Received a Special Recognition at E-Justice Project 🎉")
+        //             ->greeting('Hurray!')
+        //             ->line("I am thrilled to inform you that your hard work and dedication have not gone unnoticed. A special recognition has been awarded to you for your exceptional contributions to the team.")
+        //             ->line(new HtmlString("<p>As a token of appreciation, a <b>".$this->incentiveData->name."</b> has been sent to you. Your efforts have made a significant impact, and we want to celebrate your success.</p>"))
+        //             ->line("Once again, congratulations on this well-deserved recognition. We are proud to have you as part of the E-Justice Project team");
     }
 
     /**

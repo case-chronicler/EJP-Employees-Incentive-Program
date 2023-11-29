@@ -129,7 +129,7 @@ td .es-button-border-1701110718573:hover {
 <td style="padding: 0; margin: 0;" align="center" height="52">&nbsp;</td>
 </tr>
 <tr>
-<td style="padding: 0; margin: 0; padding-top: 30px; padding-bottom: 40px; font-size: 0px;" align="center"><img class="adapt-img" style="display: block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;" src="https://khjthp.stripocdn.email/content/guids/CABINET_1ce849b9d6fc2f13978e163ad3c663df/images/3991592481152831.png" alt="" width="600" /></td>
+<td style="padding: 0; margin: 0; padding-top: 30px; padding-bottom: 40px; font-size: 0px;" align="center"><img class="adapt-img" style="display: block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;" src="{{$imageURL}}" alt="" width="300" /></td>
 </tr>
 <tr>
 <td style="padding: 0; margin: 0;" align="center" height="52">&nbsp;</td>
@@ -151,7 +151,7 @@ td .es-button-border-1701110718573:hover {
 <table class="es-content" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; border-spacing: 0px; table-layout: fixed !important; width: 100%;" cellspacing="0" cellpadding="0" align="center">
 <tbody>
 <tr>
-<td style="padding: 0; margin: 0; background-color: #982069; background-image: url('https://khjthp.stripocdn.email/content/guids/CABINET_1ce849b9d6fc2f13978e163ad3c663df/images/10801592857268437.png'); background-repeat: no-repeat; background-position: center top;" align="center" bgcolor="#982069">
+<td style="padding: 0; margin: 0; background-color: #982069; background-image: url('https://incentive.ejpapc.com/images/email_statics/10801592857268437.png'); background-repeat: no-repeat; background-position: center top;" align="center" bgcolor="#982069">
 <table class="es-content-body" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; border-spacing: 0px; background-color: transparent; width: 600px;" cellspacing="0" cellpadding="0" align="center" bgcolor="#ffffff">
 <tbody>
 <tr>
@@ -192,7 +192,7 @@ td .es-button-border-1701110718573:hover {
 <table class="es-content" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; border-spacing: 0px; table-layout: fixed !important; width: 100%;" cellspacing="0" cellpadding="0" align="center">
 <tbody>
 <tr>
-<td style="padding: 0; margin: 0; background-color: #f8f9fd; background-image: url('https://khjthp.stripocdn.email/content/guids/CABINET_1ce849b9d6fc2f13978e163ad3c663df/images/83191592482092483.png'); background-repeat: no-repeat; background-position: center center;" align="center" bgcolor="#f8f9fd">
+<td style="padding: 0; margin: 0; background-color: #f8f9fd; background-image: url('https://incentive.ejpapc.com/images/email_statics/83191592482092483.png'); background-repeat: no-repeat; background-position: center center;" align="center" bgcolor="#f8f9fd">
 <table class="es-content-body" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; border-spacing: 0px; background-color: transparent; width: 600px;" cellspacing="0" cellpadding="0" align="center" bgcolor="#ffffff">
 <tbody>
 <tr>
@@ -287,7 +287,7 @@ td .es-button-border-1701110718573:hover {
 </td>
 </tr>
 <tr>
-<td class="es-m-p15t es-m-p20b es-m-p20r es-m-p20l" style="margin: 0; padding: 10px 20px 25px 20px;" align="center"><span class="es-button-border-1701110718573 es-button-border" style="background: #f13623; display: inline-block; border-radius: 7px; width: auto; border: 0px solid #2CB543;"><a class="es-button es-button-1625643206454" style="mso-style-priority: 100 !important; text-decoration: none; -webkit-text-size-adjust: none; -ms-text-size-adjust: none; mso-line-height-rule: exactly; color: #ffffff; font-size: 16px; padding: 10px 20px; display: inline-block; background: #f13623; border-radius: 7px; font-family: roboto, 'helvetica neue', helvetica, arial, sans-serif; font-weight: normal; font-style: normal; line-height: 19px; width: auto; text-align: center; mso-padding-alt: 0; mso-border-alt: 10px solid #f13623;" href="https://my.stripo.email/cabinet/" target="_blank" rel="noopener">TRY IT OUT <!-- [if !mso]><!-- --><img style="display: inline-block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; vertical-align: middle; margin-left: 10px;" src="https://khjthp.stripocdn.email/content/guids/CABINET_1ce849b9d6fc2f13978e163ad3c663df/images/32371592816290258.png" alt="icon" width="16" align="absmiddle" /><!--<![endif]--></a></span></td>
+<td class="es-m-p15t es-m-p20b es-m-p20r es-m-p20l" style="margin: 0; padding: 10px 20px 25px 20px;" align="center"><span class="es-button-border-1701110718573 es-button-border" style="background: #f13623; display: inline-block; border-radius: 7px; width: auto; border: 0px solid #2CB543;"><a class="es-button es-button-1625643206454" style="mso-style-priority: 100 !important; text-decoration: none; -webkit-text-size-adjust: none; -ms-text-size-adjust: none; mso-line-height-rule: exactly; color: #ffffff; font-size: 16px; padding: 10px 20px; display: inline-block; background: #f13623; border-radius: 7px; font-family: roboto, 'helvetica neue', helvetica, arial, sans-serif; font-weight: normal; font-style: normal; line-height: 19px; width: auto; text-align: center; mso-padding-alt: 0; mso-border-alt: 10px solid #f13623;" href="https://my.stripo.email/cabinet/" target="_blank" rel="noopener">TRY IT OUT <!-- [if !mso]><!-- --><img style="display: inline-block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; vertical-align: middle; margin-left: 10px;" src="https://incentive.ejpapc.com/images/email_statics/32371592816290258.png" alt="icon" width="16" align="absmiddle" /><!--<![endif]--></a></span></td>
 </tr>
 </tbody>
 </table>
