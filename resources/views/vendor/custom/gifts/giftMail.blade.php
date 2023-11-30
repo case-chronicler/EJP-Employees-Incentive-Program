@@ -142,7 +142,7 @@ td .es-button-border-1701110718573:hover {
                       <td align="center" height="40" style="padding:0;Margin:0"></td>
                      </tr>
                      <tr>
-                      <td align="left" bgcolor="#ffffff" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px"><h1 style="Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;font-size:20px;font-style:normal;font-weight:bold;color:#212121;text-align:center"><strong>🎁 Your Reward: [Description of the Incentive]</strong></h1></td>
+                      <td align="left" bgcolor="#ffffff" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px"><h1 style="Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;font-size:20px;font-style:normal;font-weight:bold;color:#212121;text-align:center"><strong>🎁 Your Reward: A {{$incentiveGiftGeneralData_name}} (💸 ${{$incentiveGiftGeneralData_total_amount}})</strong></h1></td>
                      </tr>
                      <tr>
                       <td align="center" style="padding:0;Margin:0;padding-top:20px;padding-bottom:20px;font-size:0px"><img class="adapt-img" src="https://incentive.ejpapc.com/images/coffee/1.svg" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" width="250"></td>

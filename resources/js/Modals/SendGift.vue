@@ -237,28 +237,28 @@ onMounted(() => {
 											<div
 												v-if="gift.name === 'coffee'"
 												:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
+												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center justify-center"
 											>
 												<Coffee />
 											</div>
 											<div
 												v-if="gift.name === 'cupcake'"
 												:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
+												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center justify-center"
 											>
 												<Cupcake />
 											</div>
 											<div
 												v-if="gift.name === 'flower'"
 												:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
+												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center justify-center"
 											>
 												<Flower />
 											</div>
 											<div
 												v-if="gift.name === 'silver_pen'"
 												:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
+												class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center justify-center"
 											>
 												<QuillSliverPen />
 											</div>
@@ -280,7 +280,7 @@ onMounted(() => {
 										<div
 											v-if="gift.name === 'pizza'"
 											:class="{ 'bg-gray-300 ': gift_name === gift.name }"
-											class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center"
+											class="w-full hover:cursor-pointer hover:bg-gray-200 shadow-md focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg px-3 py-1.5 text-center inline-flex items-center justify-center"
 										>
 											<Pizza />
 										</div>

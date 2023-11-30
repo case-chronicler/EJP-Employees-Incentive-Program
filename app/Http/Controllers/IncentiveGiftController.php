@@ -392,7 +392,11 @@ class IncentiveGiftController extends Controller
             
             $allRecipientData = self::getIncentiveDataByIncentiveGiftTypeId($incentives_gift_type_id);
             
-            $incentiveGiftData = $newIncentiveGift::with('Incentive')->first();
+            $incentiveGiftData = $newIncentiveGift::with('Incentive')->where('incentives_gift_type_id', '=', $incentives_gift_type_id)->first();
+
+        //     print_r(json_encode($newIncentiveGift));
+        //     print_r(json_encode($incentiveGiftData));
+        // die();
 
             Mail::send(new \App\Mail\IndividiualgiftNewMail($newIncentiveGiftTransfer, $allRecipientData, $incentiveGiftData));
             
