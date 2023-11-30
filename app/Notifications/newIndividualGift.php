@@ -53,7 +53,7 @@ class newIndividualGift extends Notification
     {
         // print_r(json_encode($notifiable));
         // die();
-        return new \App\Mail\IndividiualgiftNewMail($notifiable);
+        return new \App\Mail\IndividiualgiftNewMail($notifiable, null, null);
 
         // return (new MailMessage)
         //             ->subject("Congratulations! You've Received a Special Recognition at E-Justice Project 🎉")

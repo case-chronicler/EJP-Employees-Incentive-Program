@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 
 
 use Exception;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -187,16 +189,7 @@ class IncentiveGiftController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Incentive_gift  $incentive_gift
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Incentive_gift $incentive_gift)
-    {
-        $incentive_gift_type_id = request()->incentive_gift_type_id;
-
+    static function getIncentiveDataByIncentiveGiftTypeId ($incentive_gift_type_id) {
         $incentiveData = DB::table('incentives_gift')
                 ->join('incentives', 'incentives_gift.incentive_id', '=', 'incentives.incentive_id')
                 ->join('incentives_gift_transfer', 'incentives_gift.incentives_gift_type_id', '=', 'incentives_gift_transfer.incentives_gift_type_id')
@@ -233,7 +226,21 @@ class IncentiveGiftController extends Controller
                 ->latest('incentives_gift.created_at')                
                 ->get();
 
-                
+            return $incentiveData ?? [];
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Incentive_gift  $incentive_gift
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Incentive_gift $incentive_gift)
+    {
+        $incentive_gift_type_id = request()->incentive_gift_type_id;
+
+        $incentiveData = self::getIncentiveDataByIncentiveGiftTypeId($incentive_gift_type_id);
+
         $incentiveData_processed = [
             "recipient" => [],
             "sender" => [],
@@ -370,7 +377,7 @@ class IncentiveGiftController extends Controller
                 'note' => $gift_note,
             ]);
     
-            $newIncentiveGift->incentives_gift_transfer()->create([
+            $newIncentiveGiftTransfer = $newIncentiveGift->incentives_gift_transfer()->create([
                 'amount' => $gift_total_price,
                 'to_employee_id' => $receiver_user_id,
                 'from_employee_id' => $sender_employee_id,
@@ -379,10 +386,16 @@ class IncentiveGiftController extends Controller
             Employee::find($receiver_user_id)->increment('balance', $gift_total_price);
 
             $employee = Employee::find($sender_employee->employee_id);
-            $employee->notify(new NewGift_Attorney($newIncentiveGift));
+            $employee->notify(new NewGift_Attorney($newIncentiveGift));            
             
             DB::commit(); 
-    
+            
+            $allRecipientData = self::getIncentiveDataByIncentiveGiftTypeId($incentives_gift_type_id);
+            
+            $incentiveGiftData = $newIncentiveGift::with('Incentive')->first();
+
+            Mail::send(new \App\Mail\IndividiualgiftNewMail($newIncentiveGiftTransfer, $allRecipientData, $incentiveGiftData));
+            
         } catch (\Throwable $th) {
             DB::rollBack();
             throw \Illuminate\Validation\ValidationException::withMessages([

@@ -33,9 +33,9 @@ class EventServiceProvider extends ServiceProvider
         NewUserInviteCreated::class => [
             SendUserInviteNotifications::class,
         ],
-        newEmployeeGift::class => [
-            SendNewGiftNotification::class,
-        ],
+        // newEmployeeGift::class => [
+        //     SendNewGiftNotification::class,
+        // ],
         NewWithdrawalRequest::class => [
             SendNewWithdrawalRequestNotification::class,
         ],
