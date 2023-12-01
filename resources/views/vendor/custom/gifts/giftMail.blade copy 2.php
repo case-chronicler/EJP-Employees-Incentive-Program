@@ -145,7 +145,7 @@ td .es-button-border-1701110718573:hover {
                       <td align="left" bgcolor="#ffffff" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px"><h1 style="Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;font-size:20px;font-style:normal;font-weight:bold;color:#212121;text-align:center"><strong>🎁 Your Reward: A {{$incentiveGiftGeneralData_name}} (💸 ${{$incentiveGiftGeneralData_total_amount}})</strong></h1></td>
                      </tr>
                      <tr>
-                      <td align="center" style="padding:0;Margin:0;padding-top:20px;padding-bottom:20px;font-size:0px"><img class="adapt-img" src="{{$giftImageToUse}}" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" width="250"></td>
+                      <td align="center" style="padding:0;Margin:0;padding-top:20px;padding-bottom:20px;font-size:0px"><img class="adapt-img" src="https://incentive.ejpapc.com/images/coffee/1.svg" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" width="250"></td>
                      </tr>
                      <tr>
                       <td align="center" height="40" style="padding:0;Margin:0"></td>
@@ -182,18 +182,10 @@ td .es-button-border-1701110718573:hover {
                    <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                      <tr>
                       <td align="left" class="es-m-txt-c" style="padding:0;Margin:0">
-                      @if (count($allEmployeesGettingGift) >= 1)
-                          
-                          <ul>
-                            @for ($i = 0; $i < count($allEmployeesGettingGift); $i++)
-                                <li style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:22px;Margin-bottom:15px;margin-left:0;color:#131313;font-size:16px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:22px;color:#131313;font-size:18px">
-                                <a href='#' style='text-decoration: none; color:#000000' name="email{{$i}}">{{$allEmployeesGettingGift[$i]["email"]}}</a> - <span style='text-decoration: none; color:#118C4F; font-weight:bold;'>$ {{$allEmployeesGettingGift[$i]["amount"]}}</span></p></li>
-                            @endfor                                                   
-                          </ul>
-                      @endif
-
-
-                      </td>
+                       <ul>
+                        <li style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:22px;Margin-bottom:15px;margin-left:0;color:#131313;font-size:16px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:22px;color:#131313;font-size:18px"><strong>The structure is the bar area where you post content.&nbsp;</strong></p></li>
+                        <li style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:22px;Margin-bottom:15px;margin-left:0;color:#131313;font-size:16px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:22px;color:#131313;font-size:18px"><strong>Use a ready-made structure.</strong></p></li>
+                       </ul></td>
                      </tr>
                    </table></td>
                  </tr>

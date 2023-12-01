@@ -394,13 +394,14 @@ class IncentiveGiftController extends Controller
             
             $incentiveGiftData = $newIncentiveGift::with('Incentive')->where('incentives_gift_type_id', '=', $incentives_gift_type_id)->first();
 
-        //     print_r(json_encode($newIncentiveGift));
-        //     print_r(json_encode($incentiveGiftData));
+        // print_r(json_encode($incentiveGiftData));
         // die();
 
             Mail::send(new \App\Mail\IndividiualgiftNewMail($newIncentiveGiftTransfer, $allRecipientData, $incentiveGiftData));
+                 
             
         } catch (\Throwable $th) {
+              
             DB::rollBack();
             throw \Illuminate\Validation\ValidationException::withMessages([
                 // 'general' => 'Sorry, we are unable to process your request. Please try again'

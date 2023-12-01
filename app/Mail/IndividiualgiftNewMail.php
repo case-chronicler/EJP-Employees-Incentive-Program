@@ -60,8 +60,8 @@ class IndividiualgiftNewMail extends Mailable
     public $incentiveGiftGeneralData_amount_per_item = null;
     public $incentiveGiftGeneralData_quantity = null;
     public $incentiveGiftGeneralData_total_amount = null;
-
-
+    
+    public $giftImageToUse = '';
 
     /**
      * Create a new message instance.
@@ -91,7 +91,11 @@ class IndividiualgiftNewMail extends Mailable
         $this->incentiveGiftGeneralData_amount_per_item = $incentiveGift->incentive->amount_per_item ?? '';
         $this->incentiveGiftGeneralData_quantity = $incentiveGift->gift_quantity ?? '';
         $this->incentiveGiftGeneralData_total_amount = $incentiveGift->amount ?? '';
-                            
+            
+        //     print_r(json_encode($this->recipentsEmail));
+        // die();
+
+        $this->giftImageToUse = $this->allGiftImages[$this->incentiveGiftGeneralData_icon_name][rand(0, count($this->allGiftImages[$this->incentiveGiftGeneralData_icon_name]) - 1)];
     }
 
     /**
