@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use App\Models\Invite;
 use App\Notifications\NewUserInvite;
 
-class SendUserInviteNotifications implements ShouldQueue
+class SendUserInviteNotifications 
 {
     /**
      * Create the event listener.

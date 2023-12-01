@@ -20,9 +20,6 @@ class IndividiualgiftNewMail extends Mailable
 
     public $recipentsEmail = null;
 
-    public $imageURL = "https://incentive.ejpapc.com/images/pizza/5.jpg";
-    public $imageAlt = "";
-
     public $allEmployeesGettingGift = [ ];
     public $allGiftImages = [ 
         "coffee" => [
@@ -70,6 +67,10 @@ class IndividiualgiftNewMail extends Mailable
      */
     public function __construct(Incentives_gift_transfer $Incentives_gift_transfer, $allRecipientData, Incentive_gift|null $incentiveGift)
     {        
+
+        //             print_r(json_encode($allRecipientData));
+        // die();
+
         $to_employee = Employee::find($Incentives_gift_transfer->to_employee_id);
         $user_id = $to_employee->user_id;
         
@@ -82,9 +83,20 @@ class IndividiualgiftNewMail extends Mailable
             "email" => $user->email,
             "amount" => $Incentives_gift_transfer->amount
         ]);   
-        
 
-        // {"incentives_gift_id":1,"incentives_gift_type_id":"single_9f844a1860e7d70be0aa98d16775c4d11ce26febc83a394bf8ef23c21ba2567c","incentives_gift_type":"individual","amount":"7.50","gift_quantity":"3","note":"test","created_at":"2023-11-26T14:39:32.000000Z","updated_at":"2023-11-26T14:39:32.000000Z","incentive_id":2,"incentive":{"incentive_id":2,"name":"Cupcake","icon_name":"cupcake","amount_per_item":"2.50","type":"individual","created_at":"2023-11-20T06:46:52.000000Z","updated_at":"2023-11-20T06:46:52.000000Z"}}
+        if(count($allRecipientData) > 0){
+            for ($i=0; $i < count($allRecipientData) ; $i++) {
+                if($this->recipentsEmail === $allRecipientData[$i]->user_to_email){
+                    continue;
+                } 
+                array_push($this->allEmployeesGettingGift, [
+                    "isRecipentOfMail" => false,
+                    "email" => $allRecipientData[$i]->user_to_email,
+                    "amount" => $allRecipientData[$i]->incentives_gift_transfer_amount_per_employee
+                ]);
+            }
+        }
+        
 
         $this->incentiveGiftGeneralData_name = $incentiveGift->incentive->name ?? '';
         $this->incentiveGiftGeneralData_icon_name = $incentiveGift->incentive->icon_name ?? '';
@@ -92,7 +104,7 @@ class IndividiualgiftNewMail extends Mailable
         $this->incentiveGiftGeneralData_quantity = $incentiveGift->gift_quantity ?? '';
         $this->incentiveGiftGeneralData_total_amount = $incentiveGift->amount ?? '';
             
-        //     print_r(json_encode($this->recipentsEmail));
+        //     print_r(json_encode($allRecipientData));
         // die();
 
         $this->giftImageToUse = $this->allGiftImages[$this->incentiveGiftGeneralData_icon_name][rand(0, count($this->allGiftImages[$this->incentiveGiftGeneralData_icon_name]) - 1)];

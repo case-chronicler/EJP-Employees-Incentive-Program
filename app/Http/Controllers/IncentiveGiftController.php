@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\Incentive_gift;
 use App\Models\User;
 use App\Models\Incentives;
+use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -394,8 +395,8 @@ class IncentiveGiftController extends Controller
             
             $incentiveGiftData = $newIncentiveGift::with('Incentive')->where('incentives_gift_type_id', '=', $incentives_gift_type_id)->first();
 
-        // print_r(json_encode($incentiveGiftData));
-        // die();
+            // print_r(json_encode($incentiveGiftData));
+            // die();
 
             Mail::send(new \App\Mail\IndividiualgiftNewMail($newIncentiveGiftTransfer, $allRecipientData, $incentiveGiftData));
                  
@@ -442,6 +443,8 @@ class IncentiveGiftController extends Controller
             $incentives_gift_type_id = "group_".hash('sha256', $hashSeed);
     
             $incentives_gift_type = 'group';
+
+            $successfulIncentiveGiftTransfers = [];
             
             DB::beginTransaction();
             
@@ -455,12 +458,18 @@ class IncentiveGiftController extends Controller
             
             for ($i=0; $i < count($employees) ; $i++) { 
                 $receiver_user_id = $employees[$i];
-                
-                $newIncentiveGift->incentives_gift_transfer()->create([
-                    'amount' => $gift_price_per_employee,
-                    'to_employee_id' => $receiver_user_id,
-                    'from_employee_id' => $sender_employee_id,
-                ]);
+
+                $isTranferSuccessful = $newIncentiveGift->incentives_gift_transfer()->create([
+                        'amount' => $gift_price_per_employee,
+                        'to_employee_id' => $receiver_user_id,
+                        'from_employee_id' => $sender_employee_id,
+                    ])  ?? false;
+
+                if($isTranferSuccessful){
+                    array_push($successfulIncentiveGiftTransfers, 
+                        $isTranferSuccessful
+                    );                
+                }
 
                 Employee::find($receiver_user_id)->increment('balance', $gift_price_per_employee);
             }
@@ -469,9 +478,22 @@ class IncentiveGiftController extends Controller
             $employee->notify(new NewGift_Attorney($newIncentiveGift));
             
             DB::commit(); 
+
+            $allRecipientData = self::getIncentiveDataByIncentiveGiftTypeId($incentives_gift_type_id);
+            
+            $incentiveGiftData = $newIncentiveGift::with('Incentive')->where('incentives_gift_type_id', '=', $incentives_gift_type_id)->first();
+
+            // print_r(json_encode($incentiveGiftData));
+            // die();
+
+            for ($i=0; $i < count($successfulIncentiveGiftTransfers); $i++) { 
+                Mail::send(new \App\Mail\IndividiualgiftNewMail($successfulIncentiveGiftTransfers[$i], $allRecipientData, $incentiveGiftData));
+            }
+
     
         } catch (\Throwable $th) {
             DB::rollBack();
+            throw new Error($th);
             throw \Illuminate\Validation\ValidationException::withMessages([
                 // 'general' => 'Sorry, we are unable to process your request. Please try again'
                 'general' => $th->getMessage()
