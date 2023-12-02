@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\EmployeePageDataController;
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,3 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/incentives', [EmployeePageDataController::class, 'incentives'])->name('incentivesOnly');
+Route::post('/transactions', [EmployeePageDataController::class, 'transactions'])->name('transactionsOnly');
+// Route::middleware('auth')->group(function () {    
+// });

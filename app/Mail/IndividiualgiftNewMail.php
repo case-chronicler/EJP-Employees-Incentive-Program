@@ -52,6 +52,44 @@ class IndividiualgiftNewMail extends Mailable
         ],        
     ];
 
+    public $allTitleStatements = [
+        "coffee" => [
+            "Brewed Brilliance - A Fresh Cup of Thanks Awaits You! 🎁",
+            "Caffeine Cheers - Your Work Deserves a Java Boost! 🎁" ,
+            "Espresso Elation - A Cup of Motivation Just for You!  🎁",
+            "Mug Magic - Unlock Your Coffee Incentive Today! 🎁"
+        ],
+        
+        "cupcake" => [
+            "Sweet Success Unwrapped - 🧁 A Cupcake Celebration for You!",
+            "Bite-Sized Appreciation - 🧁 Indulge in a Cupcake Treat!",
+            "Frosting Fiesta - 🧁 Your Hard Work Deserves a Sweet Reward!",
+            "Sprinkled Joy - 🧁 Cupcakes to Celebrate Your Wins!"
+        ],
+        
+        "flower" => [
+            "Blossoms of Gratitude - 💐 A Floral Thank You for You!",
+            "Petals and Praise - 💐 Your Dedication Blooms Brightly!",
+            "Flower Power - 💐 A Bouquet of Thanks Just for You!",
+            "Botanical Cheers - 💐 Celebrate Your Achievements with Flowers!"
+        ],
+        
+        "silver_pen" => [
+            "Inkredible Work! - A Shiny Silver Pen to Express Our Thanks! 🎁",
+            "Write On! - Your Achievements Deserve a Silver Signature! 🎁",
+            "Pen Perfection - A Token of Appreciation in Silver Ink! 🎁",
+            "Silver Lining - A Pen for Your Remarkable Contributions! 🎁"
+        ],
+        
+        "pizza" => [
+            "Pizza Party Time! - 🍕 Savoring Success, One Slice at a Time!",
+            "Slice of Victory - 🍕 Your Hard Work Earns a Pizza Reward!",
+            "Cheesy Cheers - 🍕 Celebrate Your Wins with a Pizza Feast!",
+            "Pizza Pleasantries - 🍕 A Delicious Thank You Just for You!"
+        ]
+    ];
+
+
     public $incentiveGiftGeneralData_name = null;
     public $incentiveGiftGeneralData_icon_name = null;
     public $incentiveGiftGeneralData_amount_per_item = null;

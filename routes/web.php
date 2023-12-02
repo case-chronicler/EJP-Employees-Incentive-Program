@@ -61,6 +61,8 @@ Route::resource('withdrawals', WithdrawalsController::class)
 
 Route::middleware('auth')->group(function () {
     
+    Route::get('/employee/{employee_id}', [EmployeeController::class, 'show'])->name('employee.show');
+    
     Route::get('/incentive_gift', [IncentiveGiftController::class, 'index'])->name('incentive_gift.index');
     Route::get('/incentive_gift/{incentive_gift_type_id}', [IncentiveGiftController::class, 'show'])->name('incentive_gift.show');
 

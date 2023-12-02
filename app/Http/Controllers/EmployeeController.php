@@ -107,7 +107,7 @@ class EmployeeController extends Controller
 
         if($user_id !== ''){
             $users_and_employees = $users_and_employees
-                ->where('users.user_id', '==', $user_id);
+                ->where('users.user_id', '=', $user_id);
         }
 
         if($excludedUser !== ''){
@@ -121,6 +121,7 @@ class EmployeeController extends Controller
 
             
         foreach ($users_and_employees as $current_user_and_employee) {
+                     
 
             if(!isset($processed_users_and_employees['00'.$current_user_and_employee->user_id])){
                 $processed_users_and_employees['00'.$current_user_and_employee->user_id] = [
@@ -129,6 +130,11 @@ class EmployeeController extends Controller
                     'user_fullname' => $current_user_and_employee->user_fullname,
                     'user_email' => $current_user_and_employee->user_email,
                     'is_user_employed' => $current_user_and_employee->is_user_employed,
+                    
+                    'employee_bal' => $current_user_and_employee->employee_bal,
+                    'employee_created_at' => $current_user_and_employee->employee_created_at,
+
+
                     'positions' => ($current_user_and_employee->position_name) ? [$current_user_and_employee->position_name] : [],
                 ];
             }else{
@@ -266,7 +272,21 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
-        //
+        $employee_id = request()->employee_id;
+
+        $employee_user = Employee::find($employee_id)->user;            
+
+        $employeeData_collections = $this->fetchEmployeeUserData($employee_user->user_id);
+        $employeeData = null;
+
+        foreach ($employeeData_collections as $key => $value) {
+           $employeeData = $value;
+           break;
+        }  
+
+        return Inertia::render('Employee/single', [    
+            "employeeData" => $employeeData  ?? null
+        ]);
     }
 
     /**

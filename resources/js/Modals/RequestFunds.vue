@@ -100,9 +100,7 @@ onMounted(() => {
 								</h3>
 								<div class="mt-2">
 									<p class="text-sm text-gray-500">
-										Please review the details below before sending the
-										invitation. Once invited, your new employee will be granted
-										the selected roles. This action cannot be undone!
+										Please review the details below before sending the request.
 									</p>
 								</div>
 							</div>

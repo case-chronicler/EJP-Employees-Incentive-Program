@@ -167,9 +167,16 @@ const initSendGit_Group = (selected_gift_type) => {
 							>
 								<div class="flex flex-col">
 									<div>
-										<h2 class="font-bold text-gray-600 text-center">
-											{{ user_and_employee.user_fullname }}
-										</h2>
+										<Link
+											:href="
+												route('employee.show', user_and_employee.employee_id)
+											"
+											class="cursor-pointer text-center transition text-gray-600 hover:text-slate-400"
+										>
+											<h2 class="font-bold text-center">
+												{{ user_and_employee.user_fullname }}
+											</h2>
+										</Link>
 									</div>
 									<div class="my-6">
 										<div class="w-full flex flex-row space-x-4 items-center">
