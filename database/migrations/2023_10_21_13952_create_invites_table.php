@@ -14,14 +14,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('withdrawal_requests', function (Blueprint $table) {
-            $table->id('withdrawal_request_id');
+        Schema::create('invites', function (Blueprint $table) {
+            $table->id('invite_id');
+
+            $table->string('invite_email');
+            $table->enum('invite_status', ['accepted', 'pending']);
+            $table->json('positions_assigned');
+            $table->integer("days_before_first_withdrawal");
+            $table->string('invite_link_ref')->unique();
+            $table->foreignId('invite_sent_by')->constrained('users', 'user_id');
+
             $table->timestamps();
-            $table->string('withdrawal_request_link_id')->unique();
-            $table->string('withdrawal_remark');
-            $table->decimal('amount');
-            $table->enum('status', ['success', 'pending', 'failed', 'rejected']);
-            $table->foreignId('employee_id')->constrained('employees', 'employee_id');
         });
     }
 
@@ -33,7 +36,7 @@ return new class extends Migration
     public function down()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-        Schema::dropIfExists('withdrawal_requests');
+        Schema::dropIfExists('invites');
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 };

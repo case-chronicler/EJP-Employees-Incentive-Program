@@ -1,12 +1,16 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import Dropdown from "@/Components/Dropdown.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import WithdrawalRequestAction from "@/Modals/WithdrawalRequestAction.vue";
 
 import Coin from "@/Components/icons/coin.vue";
 
 import { Head, Link, useForm, usePage, router } from "@inertiajs/vue3";
 import { computed, reactive, ref } from "vue";
+
+import { useModalStore } from "@/Store/modal";
+
+const modalStore = useModalStore();
 
 const props = defineProps({
 	withdrawal_request_data: Object,
@@ -14,26 +18,16 @@ const props = defineProps({
 
 const isEmployeeAnAttorney = usePage().props.isEmployeeAnAttorney;
 
-const form = useForm({
-	action: "",
-});
+const action = ref("");
 
-const act_on_request = (action) => {
-	if (form.processing) {
+const initActionModal = (selectedAction) => {
+	if (selectedAction == "") {
 		return;
 	}
 
-	form.action = action;
+	action.value = selectedAction;
 
-	form.patch(
-		route(
-			"withdrawal_requests.update",
-			props.withdrawal_request_data.withdrawal_request_link_id
-		),
-		{
-			onSuccess: () => form.reset(),
-		}
-	);
+	modalStore.openWithdrawalRequestActionModal();
 };
 
 const goToWithdrawals = () => {
@@ -42,7 +36,18 @@ const goToWithdrawals = () => {
 </script>
 
 <template>
+	<WithdrawalRequestAction
+		:action="action"
+		:amount="withdrawal_request_data.withdrawal_request_amount"
+		:sender="withdrawal_request_data.user_email"
+		:withdrawal_request_link_id="
+			withdrawal_request_data.withdrawal_request_link_id
+		"
+		v-if="modalStore.currentModal === 'WITHDRAWAL_REQUEST_ACTION'"
+	/>
+
 	<Head title="Withdrawal Request" />
+
 	<AuthenticatedLayout>
 		<div class="my-16">
 			<div class="max-w-5xl mx-auto px-6 lg:px-8 space-y-14">
@@ -121,6 +126,13 @@ const goToWithdrawals = () => {
 									}"
 								>
 									{{ withdrawal_request_data.withdrawal_request_status }}
+
+									<span
+										v-if="withdrawal_request_data?.withdrawal_remark ?? false"
+										class="text-xs"
+									>
+										({{ withdrawal_request_data?.withdrawal_remark }})
+									</span>
 								</dd>
 							</div>
 							<div
@@ -134,14 +146,14 @@ const goToWithdrawals = () => {
 								<div></div>
 								<div class="py-3 sm:flex sm:flex-row-reverse">
 									<button
-										@click.prevent="act_on_request('approve')"
+										@click.prevent="initActionModal('approve')"
 										type="button"
 										class="text-green-900 uppercase inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm sm:ml-3 sm:w-auto bg-white ring-1 ring-inset ring-green-300 hover:bg-green-50 sm:mt-0 sm:w-auto"
 									>
 										approve
 									</button>
 									<button
-										@click.prevent="act_on_request('reject')"
+										@click.prevent="initActionModal('reject')"
 										type="button"
 										class="mt-3 uppercase inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-red-900 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50 sm:mt-0 sm:w-auto"
 									>

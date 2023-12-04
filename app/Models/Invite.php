@@ -32,6 +32,7 @@ class Invite extends Model
         'positions_assigned',
         'invite_link_ref',
         'invite_sent_by',
+        'days_before_first_withdrawal'
     ];
 
      public function routeNotificationForMail(Notification $notification): array|string

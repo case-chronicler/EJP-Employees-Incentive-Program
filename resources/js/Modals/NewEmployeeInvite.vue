@@ -22,6 +22,7 @@ const form = useForm({
 	invite_status: "pending",
 	positions_assigned: [],
 	invite_sent_by: user.user_id,
+	days_before_withdrawal_eligibility: 10,
 });
 
 const newInviteForm_submit = () => {
@@ -107,6 +108,32 @@ onMounted(() => {
 									<InputError
 										class="mt-2"
 										:message="form.errors.invite_email"
+									/>
+								</div>
+
+								<div>
+									<InputLabel
+										class="block text-sm font-medium leading-6 text-gray-900"
+										for="days_before_withdrawal_eligibility"
+										value="Date before first fund withdrawal can be made"
+									/>
+									<div class="mt-2">
+										<select
+											id="days_before_withdrawal_eligibility"
+											class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+											required
+											v-model="form.days_before_withdrawal_eligibility"
+										>
+											<option value="10">10 days</option>
+											<option value="20">20 days</option>
+											<option value="40">40 days</option>
+											<option value="60">60 days</option>
+											<option value="90">90 days</option>
+										</select>
+									</div>
+									<InputError
+										class="mt-2"
+										:message="form.errors.days_before_withdrawal_eligibility"
 									/>
 								</div>
 

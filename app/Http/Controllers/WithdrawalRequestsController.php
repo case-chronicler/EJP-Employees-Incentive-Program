@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
+use App\Http\Controllers\EmployeeController;
+
 use Inertia\Inertia;
 
 class WithdrawalRequestsController extends Controller
@@ -34,6 +36,34 @@ class WithdrawalRequestsController extends Controller
     public function create()
     {
         //
+    }
+
+    private function canEmployeeWithdrawFunds($employee_id) {
+        $employee = DB::table('employees')
+            ->leftJoin('invites', 'employees.employee_public_ref', '=', 'invites.invite_link_ref')
+            ->select([
+                
+                'employees.employee_id AS employee_id',
+                'employees.balance AS employee_bal',   
+                'employees.created_at AS employee_created_at',             
+                'employees.employee_public_ref AS employee_public_ref',   
+                'employees.status AS employee_status',   
+
+                'invites.days_before_first_withdrawal AS days_before_first_withdrawal'
+
+                ]
+            )
+            ->where('employees.employee_id', '=', $employee_id)->first();
+
+
+
+        $status = EmployeeController::checkWithdrawalEligibility(
+            $employee->days_before_first_withdrawal,
+            $employee->employee_created_at,
+            $employee->employee_status,
+        );
+
+        return $status['eligible'] ?? false;
     }
 
     /**
@@ -60,6 +90,12 @@ class WithdrawalRequestsController extends Controller
             $employeeModel = User::find($user_id)->employee();
     
             $employee = $employeeModel->first();
+
+            if(!$this->canEmployeeWithdrawFunds($employee->employee_id)){
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'general' => "Sorry, you can not eligible to make withdrawals at this moment"
+                ]);
+            }
     
             $employee_balance = (float) $employee->balance;
             $employee_id = (float) $employee->employee_id;
@@ -88,7 +124,7 @@ class WithdrawalRequestsController extends Controller
             //throw $th;
             DB::rollBack();
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'general' => 'action not successful'
+                'general' => ( $th->getMessage() === "Sorry, you can not eligible to make withdrawals at this moment" ) ? $th->getMessage() : 'action not successful'
             ]);
         }
     }
@@ -124,6 +160,7 @@ class WithdrawalRequestsController extends Controller
                 'employees.created_at AS employee_created_at',             
                 'withdrawal_requests.created_at AS withdrawal_requested_at',             
                 'withdrawal_requests.withdrawal_request_link_id AS withdrawal_request_link_id',             
+                'withdrawal_requests.withdrawal_remark AS withdrawal_remark',             
                 'withdrawal_requests.amount AS withdrawal_request_amount',             
                 'withdrawal_requests.status AS withdrawal_request_status',             
                 'withdrawals.amount AS successfull_withdrawal_amount',             
@@ -154,48 +191,41 @@ class WithdrawalRequestsController extends Controller
      */
     public function update(Request $request, Withdrawal_requests $withdrawal_requests)
     {
-        try {
-            //code...
-            $withdrawal_request_id = request()->withdrawal_request_id;
-    
-            $validated = $request->validate([
-                'action' => 'required|string|in:approve,reject',
-            ]);
-    
-            $withdrawal_request = Withdrawal_requests::where('withdrawal_request_link_id', $withdrawal_request_id)->first();
-    
-            $employee_id = $withdrawal_request->employee_id;
-    
-            $employee = Employee::where('employee_id', $employee_id)->first();
-    
-            switch ($validated['action']) {
-                case 'approve':               
-                   $this->approveWithdrawalRequest($employee, $withdrawal_request);
-                    break;
-    
-                case 'reject':
-                    $this->rejectWithdrawalRequest($employee, $withdrawal_request);
-                    break;
-                
-            }
+        $withdrawal_request_id = request()->withdrawal_request_id;
+
+        $validated = $request->validate([
+            'action' => 'required|string|in:approve,reject',
+            'remark' => 'required|string',
+        ]);
+
+        $withdrawal_request = Withdrawal_requests::where('withdrawal_request_link_id', $withdrawal_request_id)->first();
+
+        $employee_id = $withdrawal_request->employee_id;
+
+        $employee = Employee::where('employee_id', $employee_id)->first();
+
+        switch ($validated['action']) {
+            case 'approve':               
+               $this->approveWithdrawalRequest($employee, $withdrawal_request, $validated['remark']);
+                break;
+
+            case 'reject':
+                $this->rejectWithdrawalRequest($employee, $withdrawal_request, $validated['remark']);
+                break;
             
-            // return json_encode($withdrawal_request);
-    
-            $withdrawal_request_data = $this->getWithdrawalRequestByID($withdrawal_request_id);
-    
-            return Inertia::render('Transaction/withdrawal_request', [    
-                'withdrawal_request_data' => $withdrawal_request_data
-            ]);
-        } catch (\Throwable $th) {
-            //throw $th;
-            return Inertia::render('Transaction/withdrawal_request', [    
-                'withdrawal_request_data' => $withdrawal_request_data,
-                'error' => 'action not successful'
-            ]);
         }
+        
+        // return json_encode($withdrawal_request);
+
+        $withdrawal_request_data = $this->getWithdrawalRequestByID($withdrawal_request_id);
+
+        return Inertia::render('Transaction/withdrawal_request', [    
+            'withdrawal_request_data' => $withdrawal_request_data
+        ]);
+        
     }
 
-    private function approveWithdrawalRequest(Employee $employee, Withdrawal_requests $withdrawal_request) {
+    private function approveWithdrawalRequest(Employee $employee, Withdrawal_requests $withdrawal_request, $remark) {
         try {            
             $amount = number_format($withdrawal_request->amount, 2, '.', '');
             $employee_id = $withdrawal_request->employee_id;
@@ -209,6 +239,7 @@ class WithdrawalRequestsController extends Controller
                     'withdrawal_request_link_id', $withdrawal_request_id)
                 ->update([
                     'status' => 'success',
+                    'withdrawal_remark' => $remark
                 ]);
             
             $withdrawal_request = Withdrawal_requests::where('withdrawal_request_link_id', $withdrawal_request_id)->first();
@@ -222,7 +253,7 @@ class WithdrawalRequestsController extends Controller
         }
     }
 
-    private function rejectWithdrawalRequest(Employee $employee, Withdrawal_requests $withdrawal_request) {
+    private function rejectWithdrawalRequest(Employee $employee, Withdrawal_requests $withdrawal_request, $remark) {
         try {            
             $amount = number_format($withdrawal_request->amount, 2, '.', '');
             $employee_id = $withdrawal_request->employee_id;
@@ -235,6 +266,7 @@ class WithdrawalRequestsController extends Controller
                 ->where(
                     'withdrawal_request_link_id', $withdrawal_request_id)
                 ->update([
+                    'withdrawal_remark' => $remark,
                     'status' => 'failed',
                 ]);
     

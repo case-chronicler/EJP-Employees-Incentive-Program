@@ -28,7 +28,9 @@ class Employee extends Model
      */
     protected $fillable = [
         'balance',
-        'has_elevated_permission'
+        'has_elevated_permission',
+        'employee_public_ref',
+        'status'
     ];
 
     /**

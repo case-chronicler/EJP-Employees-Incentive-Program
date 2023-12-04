@@ -34,6 +34,8 @@ class RegisteredUserController extends Controller
     private function registerInvitedUser (Request $request, $invitedUser_positions) {    
 
         try {
+            $invitedUser_invite_link_ref = htmlspecialchars($request->input('invite_link'));
+
             //code...
             DB::beginTransaction();
 
@@ -46,6 +48,8 @@ class RegisteredUserController extends Controller
 
             $newEmployee = $user->employee()->create([
                 'balance' => 0.00,
+                'has_elevated_permission' => 0,
+                "employee_public_ref" => $invitedUser_invite_link_ref
             ]);
 
             foreach ($invitedUser_positions as $key => $value) {
@@ -70,7 +74,7 @@ class RegisteredUserController extends Controller
             // die();
 
             DB::table('invites')
-              ->where('invite_link_ref', htmlspecialchars($request->input('invite_link')))
+              ->where('invite_link_ref', $invitedUser_invite_link_ref)
               ->update(
                 [
                     'invite_status' => 'accepted',
@@ -185,6 +189,13 @@ class RegisteredUserController extends Controller
             return redirect(RouteServiceProvider::HOME);
 
         }else{
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'invite_link' => 'required|string|exists:invites,invite_link_ref',
+                'email' => 'required|string|email|max:255|unique:'.User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+
             $invitedUser = Invite::where('invite_link_ref', htmlspecialchars($request->input('invite_link')))->limit(1)->first();
 
             if(!$invitedUser){                
@@ -201,6 +212,7 @@ class RegisteredUserController extends Controller
             
             $invitedUser_email = $invitedUser->invite_email;
             $invitedUser_positions = $invitedUser->positions_assigned;
+            $invitedUser_invite_link_ref = $invitedUser->invite_link_ref;
 
             $invitedUser_email = trim($invitedUser_email) ?? '';
             $invitedUser_positions = json_decode($invitedUser_positions, JSON_OBJECT_AS_ARRAY) ?? [];
@@ -211,12 +223,7 @@ class RegisteredUserController extends Controller
                 ]);
             }
 
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'invite_link' => 'required|string|exists:invites,invite_link_ref',
-                'email' => 'required|string|email|max:255|unique:'.User::class,
-                'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            ]);
+            
 
             return $this->registerInvitedUser($request, $invitedUser_positions);
         }

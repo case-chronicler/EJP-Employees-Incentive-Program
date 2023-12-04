@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\User;
 use App\Models\Position;
 use App\Models\Role;
+use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -89,6 +90,7 @@ class EmployeeController extends Controller
         $processed_users_and_employees = [];
         $users_and_employees = DB::table('users')
             ->leftJoin('employees', 'users.user_id', '=', 'employees.user_id')
+            ->leftJoin('invites', 'employees.employee_public_ref', '=', 'invites.invite_link_ref')
             ->leftJoin('roles', 'employees.employee_id', '=', 'roles.employee_id')
             ->leftJoin('positions', 'roles.position_id', '=', 'positions.position_id')
             ->select([
@@ -96,12 +98,20 @@ class EmployeeController extends Controller
                 'users.name AS user_fullname',
                 'users.email AS user_email',
                 'users.is_employee AS is_user_employed',
+                
                 'employees.employee_id AS employee_id',
                 'employees.balance AS employee_bal',   
                 'employees.created_at AS employee_created_at',             
+                'employees.employee_public_ref AS employee_public_ref',   
+                'employees.status AS employee_status',   
+
                 'roles.id AS role_id',
+
                 'positions.position_id AS position_id',
-                'positions.position_name AS position_name'
+                'positions.position_name AS position_name',
+
+                'invites.days_before_first_withdrawal AS days_before_first_withdrawal'
+
                 ]
             );
 
@@ -133,9 +143,13 @@ class EmployeeController extends Controller
                     
                     'employee_bal' => $current_user_and_employee->employee_bal,
                     'employee_created_at' => $current_user_and_employee->employee_created_at,
-
+                    'employee_public_ref' => $current_user_and_employee->employee_public_ref,
+                    'employee_status' => $current_user_and_employee->employee_status,
+                    'days_before_first_withdrawal' => $current_user_and_employee->days_before_first_withdrawal,
 
                     'positions' => ($current_user_and_employee->position_name) ? [$current_user_and_employee->position_name] : [],
+
+                    'eligible_for_withdrawal' => self::checkWithdrawalEligibility ($current_user_and_employee->days_before_first_withdrawal, $current_user_and_employee->employee_created_at, $current_user_and_employee->employee_status),
                 ];
             }else{
                 $newPosition = ($current_user_and_employee->position_name) ? $current_user_and_employee->position_name : false;
@@ -149,6 +163,43 @@ class EmployeeController extends Controller
 
         return $processed_users_and_employees;
 
+    }
+
+    static function checkWithdrawalEligibility ($specified_days_before_first_withdrawal, $employee_created_Date, $employee_status) {
+        if(!($specified_days_before_first_withdrawal ?? false)){
+            return [
+                "eligible" => false,
+                "onboarded" => ''
+            ];
+        }
+        $status = false;
+
+        if($employee_status == 'fully_active'){
+            $status = true;
+        }elseif ($employee_status == 'on_probation') {
+            $status = false;
+        }
+
+        $today = new DateTime();
+
+        $previousDate = new DateTime($employee_created_Date);
+
+        $interval = $today->diff($previousDate);
+
+        // Access the difference in days
+        $daysDifference = $interval->days;
+        
+        if($daysDifference > $specified_days_before_first_withdrawal){
+            return [
+                "eligible" => true && $status,
+                "onboarded" => $daysDifference ?? ''
+            ];
+        }else{
+            return [
+                "eligible" => false && $status,
+                "onboarded" => $daysDifference ?? ''
+            ];
+        }
     }
 
     public function isEmployeeAnAttorney(){
@@ -272,9 +323,15 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
+        if(! $this->isEmployeeAnAttorney()){
+            return Inertia::render('Employee/index', [    
+                "employeeData" => $employeeData  ?? null
+            ]);
+        }
+
         $employee_id = request()->employee_id;
 
-        $employee_user = Employee::find($employee_id)->user;            
+        $employee_user = Employee::where('employee_public_ref', '=', $employee_id)->first()->user;            
 
         $employeeData_collections = $this->fetchEmployeeUserData($employee_user->user_id);
         $employeeData = null;

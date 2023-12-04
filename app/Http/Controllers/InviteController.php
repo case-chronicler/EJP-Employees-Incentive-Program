@@ -64,6 +64,7 @@ class InviteController extends Controller
                 'invite_status' => 'required|string|max:255',
                 'invite_sent_by' => 'required',
                 'positions_assigned' => 'required|array',
+                'days_before_withdrawal_eligibility' => 'required|numeric|min:10',
             ]);
             
             $hashSeed = $validated['invite_email'] . rand(1,1000000);
@@ -90,6 +91,7 @@ class InviteController extends Controller
                         'invite_status' => $validated['invite_status'],
                         'invite_link_ref' => $validated['invite_link_ref'],
                         'positions_assigned' => $positions_assigned_merged,
+                        'days_before_first_withdrawal' => $validated['days_before_withdrawal_eligibility']
                     ]
                 );
 
@@ -97,12 +99,17 @@ class InviteController extends Controller
             }else{
                 $validated['positions_assigned'] = $this->mergeInvitePositionIds($validated['positions_assigned']) ;
                 
-                $user->invite()->create([
-                    'invite_email' => $validated['invite_email'],
-                    'invite_status' => $validated['invite_status'],
-                    'invite_link_ref' => $validated['invite_link_ref'],
-                    'positions_assigned' => $validated['positions_assigned'],
-                ]);
+                $user->invite()->updateOrCreate(
+                    [
+                        'invite_email' => $validated['invite_email'],
+                    ],
+                    [
+                        'invite_status' => $validated['invite_status'],
+                        'invite_link_ref' => $validated['invite_link_ref'],
+                        'positions_assigned' => $validated['positions_assigned'],
+                        'days_before_first_withdrawal' => $validated['days_before_withdrawal_eligibility']
+                    ]
+                );
             }   
 
     }

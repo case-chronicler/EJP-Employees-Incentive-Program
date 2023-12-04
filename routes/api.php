@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\EmployeePageDataController;
+use App\Http\Controllers\EmployeeController;
 
 
 /*
@@ -23,5 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/incentives', [EmployeePageDataController::class, 'incentives'])->name('incentivesOnly');
 Route::post('/transactions', [EmployeePageDataController::class, 'transactions'])->name('transactionsOnly');
+
+Route::post('/employee-status', [EmployeePageDataController::class, 'employeeStatus'])->name('employeeStatus');
 // Route::middleware('auth')->group(function () {    
 // });

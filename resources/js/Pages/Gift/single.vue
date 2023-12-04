@@ -198,7 +198,7 @@ const formatDate = (date) => {
 												<span> Sender(s) </span>
 												<span class="text-right">
 													<span
-														class="text-xs inline-block py-1 px-2 m-1 text-gray-500 leading-6 bg-gray-200 rounded-full"
+														class="text-xs inline-block py-1 px-3 ml-1 mb-1 text-gray-500 leading-6 bg-gray-200 rounded-full"
 														v-for="(
 															sender, index
 														) in incentiveData_processed.sender"

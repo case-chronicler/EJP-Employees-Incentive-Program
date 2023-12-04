@@ -16,12 +16,15 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id('employee_id');
+            $table->string('employee_public_ref')->constrained('invites', 'invite_link_ref');
             $table->decimal('balance')->default(0.00);
+            $table->enum('status', ['on_probation', 'fully_active'])->default('fully_active');
             $table->timestamps();
             $table->foreignId('user_id')->unique()->constrained(
                 table: 'users', column: 'user_id'
             );
             $table->boolean('has_elevated_permission')->comment('Only employees whose role includes the position of an attorney has an elevated permission')->default(false);
+
         });
     }
 

@@ -25,7 +25,7 @@ const props = defineProps({
 	users_and_employees: Object,
 	isEmployeeAnAttorney: Boolean,
 });
-
+//employee_public_ref
 const gift_type = ref("");
 const selected_users = ref([]);
 const allUsers = ref([]);
@@ -97,6 +97,15 @@ const initSendGit_Group = (selected_gift_type) => {
 
 	modalStore.openSendGift_GroupModal();
 };
+
+const getURL = (employee_ref) => {
+	const url = usePage().props.isEmployeeAnAttorney
+		? route("employee.show", employee_ref)
+		: null;
+
+	console.log(url);
+	return url;
+};
 </script>
 
 <template>
@@ -122,6 +131,8 @@ const initSendGit_Group = (selected_gift_type) => {
 	<!-- {{ users_and_employees }}
 	{{ allPositions }} -->
 	<!-- {{ isEmployeeAnAttorney }} -->
+
+	<!-- {{ users_and_employees }} -->
 
 	<AuthenticatedLayout>
 		<template #header>
@@ -168,9 +179,7 @@ const initSendGit_Group = (selected_gift_type) => {
 								<div class="flex flex-col">
 									<div>
 										<Link
-											:href="
-												route('employee.show', user_and_employee.employee_id)
-											"
+											:href="getURL(user_and_employee.employee_public_ref)"
 											class="cursor-pointer text-center transition text-gray-600 hover:text-slate-400"
 										>
 											<h2 class="font-bold text-center">

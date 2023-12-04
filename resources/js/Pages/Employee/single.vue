@@ -15,6 +15,9 @@ import transactionsListHandler from "@/Components/employee/transactions.vue";
 import { onMounted, onUpdated } from "vue";
 import { initFlowbite } from "flowbite";
 
+import { router } from "@inertiajs/vue3";
+import axios from "axios";
+
 // initialize components based on data attribute selectors
 onMounted(() => {
 	initFlowbite();
@@ -40,6 +43,19 @@ const formatDate = (date) => {
 	} catch (error) {
 		return "";
 	}
+};
+
+const changeEmployeeStatus = async (status) => {
+	if (!props.employeeData?.employee_id) {
+		return;
+	}
+
+	await axios.post(route("employeeStatus"), {
+		employee_id: props.employeeData?.employee_id,
+		status: status,
+	});
+
+	router.reload({ only: ["employeeData"] });
 };
 </script>
 
@@ -94,16 +110,18 @@ const formatDate = (date) => {
 										</p>
 										<div class="mt-6 flex flex-wrap gap-4 justify-center">
 											<button
+												@click="changeEmployeeStatus('on_probation')"
 												type="button"
 												class="px-3 py-1.5 text-xs font-medium text-center text-white bg-red-700 rounded hover:bg-red-800 focus:ring-2 focus:outline-none focus:ring-red-300 uppercase"
 											>
 												Put on probation
 											</button>
 											<button
+												@click="changeEmployeeStatus('fully_active')"
 												type="button"
 												class="px-3 py-1.5 text-xs font-medium text-center text-white bg-green-700 rounded hover:bg-green-800 focus:ring-2 focus:outline-none focus:ring-green-300 uppercase"
 											>
-												Restore eligiblity
+												Restore employee
 											</button>
 										</div>
 									</div>
@@ -111,19 +129,63 @@ const formatDate = (date) => {
 									<div class="flex flex-col mb-3">
 										<span
 											class="text-gray-800 uppercase font-bold tracking-wider mb-1"
+											>Onboarded</span
+										>
+
+										<span class="text-xs text-gray-600">
+											{{ employeeData.eligible_for_withdrawal.onboarded }}
+											day(s) ago
+
+											<span
+												v-if="
+													employeeData.days_before_first_withdrawal -
+														employeeData.eligible_for_withdrawal.onboarded >
+													0
+												"
+											>
+												|
+												{{
+													employeeData.days_before_first_withdrawal -
+													employeeData.eligible_for_withdrawal.onboarded
+												}}
+												day(s) to first withdrawal
+											</span>
+										</span>
+									</div>
+									<div class="flex flex-col mb-3">
+										<span
+											class="text-gray-800 uppercase font-bold tracking-wider mb-1"
 											>Status</span
 										>
 										<ul class="text-sm text-gray-600">
-											<li class="mb-2">JavaScript</li>
+											<li
+												v-if="employeeData.employee_status == 'fully_active'"
+												class="mb-2 text-green-900"
+											>
+												Active
+											</li>
+											<li
+												v-if="employeeData.employee_status == 'on_probation'"
+												class="mb-2 text-red-900"
+											>
+												On Probation
+											</li>
 										</ul>
 									</div>
+
 									<div class="flex flex-col mb-3">
 										<span
 											class="text-gray-800 uppercase font-bold tracking-wider mb-1"
 											>Withdrawal Eligiblity</span
 										>
 										<ul class="text-sm text-gray-600">
-											<li class="mb-2">JavaScript</li>
+											<li
+												v-if="employeeData.eligible_for_withdrawal.eligible"
+												class="mb-2 text-green-900"
+											>
+												Eligible
+											</li>
+											<li v-else class="mb-2 text-red-900">Not Eligible</li>
 										</ul>
 									</div>
 									<div class="flex flex-col mb-3">

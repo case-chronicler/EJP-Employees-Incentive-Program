@@ -15,6 +15,9 @@ const transactionsArr = ref([]);
 const transactionsLinks = ref(null);
 
 const getData = async (url) => {
+	if (!url || !props.employee_id) {
+		return;
+	}
 	let res = await axios.post(url, {
 		employee_id: props.employee_id,
 	});

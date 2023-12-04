@@ -40,6 +40,7 @@ class Withdrawal_requests extends Model
     protected $fillable = [
         'withdrawal_request_link_id',
         'amount',
+        'withdrawal_remark',
         'status',
     ];
 

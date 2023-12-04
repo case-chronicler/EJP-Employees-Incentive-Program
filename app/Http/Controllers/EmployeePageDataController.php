@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Inertia\Response;
+use App\Models\Employee;
+
 
 class EmployeePageDataController extends Controller
 {
@@ -125,5 +126,22 @@ class EmployeePageDataController extends Controller
             return response()->json($resData);
         }
         
+    }
+
+    public function employeeStatus(Request $request) {
+
+        $validated = $request->validate([
+            'employee_id' => 'required|numeric',
+            'status' => 'required|string|in:fully_active,on_probation',
+        ]);
+
+        $employee = Employee::where('employee_id', '=', $validated['employee_id'])->update(
+            [
+                'status' =>  $validated['status']
+            ]
+        );
+
+
+
     }
 }

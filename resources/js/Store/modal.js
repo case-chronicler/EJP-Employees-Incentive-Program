@@ -20,6 +20,10 @@ export const useModalStore = defineStore("modal", () => {
 		currentModal.value = "REQUEST_FUNDS";
 	};
 
+	const openWithdrawalRequestActionModal = () => {
+		currentModal.value = "WITHDRAWAL_REQUEST_ACTION";
+	};
+
 	const closeModal = () => {
 		currentModal.value = "";
 	};
@@ -31,5 +35,6 @@ export const useModalStore = defineStore("modal", () => {
 		openSendGift_GroupModal,
 		openRequestFundsModal,
 		closeModal,
+		openWithdrawalRequestActionModal,
 	};
 });

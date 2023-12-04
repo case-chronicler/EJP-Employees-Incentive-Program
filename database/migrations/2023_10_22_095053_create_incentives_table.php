@@ -60,7 +60,7 @@ return new class extends Migration
         ]);
 
         DB::table('incentives')->insert([
-            'name' => 'Pizza',
+            'name' => 'Pizza Party',
             'icon_name' => 'pizza',
             'amount_per_item' => 0.00,
             'type' => 'group',

@@ -95,8 +95,10 @@ class IndividiualgiftNewMail extends Mailable
     public $incentiveGiftGeneralData_amount_per_item = null;
     public $incentiveGiftGeneralData_quantity = null;
     public $incentiveGiftGeneralData_total_amount = null;
+    public $incentiveGiftGeneralData_url = '';
     
     public $giftImageToUse = '';
+    public $giftHollaToUse = '';
 
     /**
      * Create a new message instance.
@@ -146,6 +148,16 @@ class IndividiualgiftNewMail extends Mailable
         // die();
 
         $this->giftImageToUse = $this->allGiftImages[$this->incentiveGiftGeneralData_icon_name][rand(0, count($this->allGiftImages[$this->incentiveGiftGeneralData_icon_name]) - 1)];
+        
+        $this->giftHollaToUse = $this->allTitleStatements[$this->incentiveGiftGeneralData_icon_name][rand(0, count($this->allGiftImages[$this->incentiveGiftGeneralData_icon_name]) - 1)];
+
+        if($Incentives_gift_transfer->incentives_gift_type_id){
+
+            $this->incentiveGiftGeneralData_url = route('incentive_gift.show', [
+                "incentive_gift_type_id" => $Incentives_gift_transfer->incentives_gift_type_id
+            ]);
+        }
+
     }
 
     /**

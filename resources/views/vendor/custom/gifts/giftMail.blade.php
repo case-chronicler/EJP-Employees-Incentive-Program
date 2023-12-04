@@ -113,7 +113,7 @@ td .es-button-border-1701110718573:hover {
                       <td align="center" height="20" style="padding:0;Margin:0"></td>
                      </tr>
                      <tr>
-                      <td align="left" style="padding:0;Margin:0;padding-bottom:10px"><h1 style="Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;font-size:30px;font-style:normal;font-weight:bold;color:#ffffff;text-align:center">Woohoo! You've Scored a Surprise Treat!</h1></td>
+                      <td align="left" style="padding:0;Margin:0;padding-bottom:10px"><h1 style="Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;font-size:30px;font-style:normal;font-weight:bold;color:#ffffff;text-align:center">{{$giftHollaToUse}}</h1></td>
                      </tr>
                    </table></td>
                  </tr>
@@ -182,12 +182,11 @@ td .es-button-border-1701110718573:hover {
                    <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                      <tr>
                       <td align="left" class="es-m-txt-c" style="padding:0;Margin:0">
-                      @if (count($allEmployeesGettingGift) >= 1)
-                          
+                      @if (count($allEmployeesGettingGift) >= 1)                                                
                           <ul>
                             @for ($i = 0; $i < count($allEmployeesGettingGift); $i++)
                                 <li style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:22px;Margin-bottom:15px;margin-left:0;color:#131313;font-size:16px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:22px;color:#131313;font-size:18px;">
-                                <a href='#' style='text-decoration: none; color:#000000' name="email{{$i}}">{{$allEmployeesGettingGift[$i]["email"]}}</a> - <span style='text-decoration: none; color:#118C4F; font-weight:bold;'>$ {{$allEmployeesGettingGift[$i]["amount"]}}</span></p></li>
+                                <a href='#' style='text-decoration: none; color:#000000' name="email{{$i}}">{{$allEmployeesGettingGift[$i]["email"]}}</a> - <span style='text-decoration: none; color:#118C4F; font-weight:bold;'>${{$allEmployeesGettingGift[$i]["amount"]}}</span></p></li>
                             @endfor                                                   
                           </ul>
                       @endif
@@ -209,7 +208,9 @@ td .es-button-border-1701110718573:hover {
                       <td align="left" style="Margin:0;padding-bottom:10px;padding-left:20px;padding-right:20px;padding-top:25px"><h1 style="Margin:0;line-height:38px;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;font-size:25px;font-style:normal;font-weight:bold;color:#fefafa;text-align:center">This is our way of saying, You're awesome, and you deserve a treat!</h1></td>
                      </tr>
                      <tr>
-                      <td align="center" class="es-m-p15t es-m-p20b es-m-p20r es-m-p20l" style="Margin:0;padding-top:10px;padding-left:20px;padding-right:20px;padding-bottom:25px"><span class="es-button-border-1701110718573 es-button-border" style="border-style:solid;border-color:#2CB543;background:#daae2a;border-width:0px;display:inline-block;border-radius:7px;width:auto"><a href="https://my.stripo.email/cabinet/" class="es-button es-button-1625643206454" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:13px;padding:10px 20px;display:inline-block;background:#daae2a;border-radius:7px;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;font-weight:bold;font-style:normal;line-height:16px;width:auto;text-align:center;mso-padding-alt:0;mso-border-alt:10px solid #daae2a">CHECK OUT YOUR GIFT <!--[if !mso]><!-- --><img src="https://incentive.ejpapc.com/images/email_statics/32371592816290258.png" alt="icon" width="16" align="absmiddle" style="display:inline-block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:middle;margin-left:10px"><!--<![endif]--></a></span></td>
+                      @if ($incentiveGiftGeneralData_url)
+                        <td align="center" class="es-m-p15t es-m-p20b es-m-p20r es-m-p20l" style="Margin:0;padding-top:10px;padding-left:20px;padding-right:20px;padding-bottom:25px"><span class="es-button-border-1701110718573 es-button-border" style="border-style:solid;border-color:#2CB543;background:#daae2a;border-width:0px;display:inline-block;border-radius:7px;width:auto"><a href="{{$incentiveGiftGeneralData_url}}" class="es-button es-button-1625643206454" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:13px;padding:10px 20px;display:inline-block;background:#daae2a;border-radius:7px;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;font-weight:bold;font-style:normal;line-height:16px;width:auto;text-align:center;mso-padding-alt:0;mso-border-alt:10px solid #daae2a">CHECK OUT YOUR GIFT <!--[if !mso]><!-- --><img src="https://incentive.ejpapc.com/images/email_statics/32371592816290258.png" alt="icon" width="16" align="absmiddle" style="display:inline-block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:middle;margin-left:10px"><!--<![endif]--></a></span></td>
+                      @endif
                      </tr>
                    </table></td>
                  </tr>
