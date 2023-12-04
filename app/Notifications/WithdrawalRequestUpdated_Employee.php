@@ -78,6 +78,7 @@ class WithdrawalRequestUpdated_Employee extends Notification
     {
         //
         $this->Withdrawal_requests =  $updated_W_Request;
+        
         $this->sender =  $this->Withdrawal_requests->employee()
             ->join('users', 'employees.user_id', 'users.user_id' )            
             ->first();

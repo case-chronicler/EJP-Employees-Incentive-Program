@@ -24,8 +24,11 @@ class NewWithdrawalRequest_Employee extends Notification
      */
     public function __construct(Withdrawal_requests $new_W_Request)
     {
-        //
         $this->Withdrawal_requests =  $new_W_Request;
+        
+        // print_r(json_encode($this->Withdrawal_requests));
+        // die();
+
         $this->sender =  $this->Withdrawal_requests->employee()
             ->join('users', 'employees.user_id', 'users.user_id' )            
             ->first();
@@ -56,7 +59,7 @@ class NewWithdrawalRequest_Employee extends Notification
 
         return (new MailMessage)
                     ->subject("Withdrawal Request Submitted")
-                ->line(new HtmlString("I hope this message finds you well. I wanted to inform you that I have submitted a withdrawal request for <b>USD ".$this->Withdrawal_requests->amount."</b>. "))
+                ->line(new HtmlString("I hope this message finds you well. You have submitted a withdrawal request for <b>USD ".$this->Withdrawal_requests->amount."</b>. "))
                 ->line("Click the button view that status of your request.")
                 ->action('Withdrawal', $withdrawal_requests_link)
                 ->line("Thanks");
